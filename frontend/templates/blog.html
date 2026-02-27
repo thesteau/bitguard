@@ -4,10 +4,13 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1>Blog</h1>
-    <div id="blog-posts" class="row">
-        <!-- Blog posts will be dynamically loaded here -->
-    </div>
+  <h1>Blog</h1>
+
+  <script id="page-data" type="application/json">
+  {{ data | tojson }}
+  </script>
+
+  <div id="posts"></div>
 </div>
 {% endblock %}
 

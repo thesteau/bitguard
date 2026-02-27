@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import pandas as pd
 
 from .environments import environments as envs
 
@@ -23,8 +24,12 @@ def index(request: Request):
 @app.get("/blog", response_class=HTMLResponse)
 def blog(request: Request):
     # Get the data from google sheets
-    blog_links = envs.BLOG_LINKS
+    df = pd.read_csv(envs.BLOG_LINKS)
+    data = {
+        "blog_data": df.to_dict(orient="records")
+    }
+
     return templates.TemplateResponse(
         "blog.html",
-        {"request": request}
+        {"request": request, "data": data}
     )
