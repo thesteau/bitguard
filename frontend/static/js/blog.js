@@ -1,4 +1,4 @@
-(function () {
+function renderBlogPosts() {
   const el = document.getElementById("page-data");
   const pageData = el ? JSON.parse(el.textContent) : {};
 
@@ -37,5 +37,8 @@
       </a>
     </article>
   `).join("");
+};
 
-})();
+
+// Execute on load
+renderBlogPosts();
