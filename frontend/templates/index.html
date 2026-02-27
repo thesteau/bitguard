@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}BitGuard – AI-Powered Risk Assessment{% endblock %}
+{% block title %}AI-Powered Risk Assessment{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -22,6 +22,31 @@
       1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
     </div>
   </div>
+
+  <div class="card">
+    <h3>Assessment</h3>
+    <div class="stats">
+        <div class="stat">
+            <label>Risk Score</label>
+            <strong>85</strong>
+        </div>
+
+        <div class="stat">
+            <label>Predicted Type</label>
+            <strong>RANSOMWARE</strong>
+        </div>
+
+        <div class="stat">
+            <label>Confidence</label>
+            <strong>0.82</strong>
+        </div>
+
+        <div class="stat">
+            <label>Recommendation</label>
+            <strong class="danger">⚠ DO_NOT_SEND</strong>
+        </div>
+    </div>
+</div>
 
 </div>
 {% endblock %}
