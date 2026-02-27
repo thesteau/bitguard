@@ -1,3 +1,4 @@
+
 services:
   neo4j:
     image: neo4j:5-enterprise
@@ -23,4 +24,4 @@ services:
       NEO4J_server_memory_heap_max__size: "16G"
       NEO4J_server_memory_pagecache_size: "64G"
       NEO4J_server_directories_import: "/import"
-
+      NEO4J_apoc_export_file_enabled: "true"
