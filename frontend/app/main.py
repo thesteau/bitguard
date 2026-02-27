@@ -1,7 +1,12 @@
+import requests
+
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+
+import environments.environments as envs
+
 
 app = FastAPI()
 
@@ -15,3 +20,11 @@ def index(request: Request):
         {"request": request}
     )
 
+@app.get("/blog", response_class=HTMLResponse)
+def blog(request: Request):
+    # Get the data from google sheets
+    blog_links = envs.BLOG_LINKS
+    return templates.TemplateResponse(
+        "blog.html",
+        {"request": request}
+    )
