@@ -1,0 +1,8 @@
+services:
+  btc_partitioned_parquet:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - ./work:${WORKDIR}
+    restart: "no"

@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BitGuard – AI-Powered Risk Assessment</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0b0e11;
+            --panel: rgba(255, 255, 255, 0.06);
+            --panel-border: rgba(255, 255, 255, 0.10);
+            --text: rgba(255, 255, 255, 0.92);
+            --muted: rgba(255, 255, 255, 0.60);
+            --accent: #f7931a;
+            --danger: #ff4d4f;
+            --shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, sans-serif;
+            background:
+                radial-gradient(1200px 700px at 15% -10%, rgba(255, 255, 255, 0.08), transparent 60%),
+                radial-gradient(1000px 600px at 90% 20%, rgba(255, 255, 255, 0.06), transparent 60%),
+                var(--bg);
+            color: var(--text);
+        }
+
+        /* NAVBAR */
+        header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: grid;
+            place-items: center;
+            color: #000;
+            font-weight: 800;
+        }
+
+        .nav a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-left: 28px;
+            font-weight: 500;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text);
+        }
+
+        .btn.primary {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* MAIN */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px 90px;
+        }
+
+        h1 {
+            font-size: clamp(36px, 4vw, 52px);
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+
+        .tagline {
+            color: var(--muted);
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        /* SEARCH */
+        .search {
+            margin-top: 40px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .search input {
+            flex: 1;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            color: var(--text);
+            font-size: 16px;
+        }
+
+        .search button {
+            background: var(--accent);
+            border: none;
+            border-radius: 14px;
+            padding: 0 22px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* CARD */
+        .card {
+            margin-top: 40px;
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px;
+        }
+
+        .card h3 {
+            margin: 0 0 18px;
+            font-size: 20px;
+        }
+
+        .code {
+            font-family: "JetBrains Mono", monospace;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.75);
+            white-space: pre-wrap;
+        }
+
+        /* STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 26px;
+        }
+
+        .stat {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .stat label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 28px;
+            margin-top: 8px;
+        }
+
+        .danger {
+            color: var(--danger);
+        }
+
+        .floating-input::placeholder {
+            color: rgba(255, 255, 255, 0.55);
+            transform: translateY(0);
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+
+        .floating-input:focus::placeholder {
+            transform: translateY(10px);
+            opacity: 0.35;
+        }
+
+        .floating-input:focus {
+            outline: none;
+            border-color: rgba(247, 147, 26, 0.6);
+        }
+
+        .footer {
+            margin-top: 120px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 26px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 14px;
+        }
+
+        .footer strong {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            margin-left: 22px;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        .logo-img {
+            height: 36px;
+            width: auto;
+            display: block;
+        }
+
+        .brand-text {
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: -0.01em;
+        }
+
+        .bit {
+            color: #4da3ff;
+            /* blue */
+        }
+
+        .guard {
+            color: #f7931a;
+            /* orange */
+        }
+
+        /* Mobile */
+        @media (max-width: 700px) {
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links a {
+                margin: 0 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="nav">
+            <div class="brand">
+                <img src="bitguard.png" alt="BitGuard logo" class="logo-img">
+                <span class="brand-text">
+                    <span class="bit">Bit</span><span class="guard">Guard</span>
+                </span>
+            </div>
+            <nav>
+                <a href="#">Docs</a>
+                <a href="#">Pricing</a>
+                <a href="#">About</a>
+                <a href="#">Blog</a>
+                <a href="#" class="btn primary">Sign Up</a>
+                <a href="#" class="btn">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <h1>
+            <span class="bit">Bit</span><span class="guard">Guard</span>
+        </h1>
+        <p class="tagline">AI-Powered Risk Assessment</p>
+
+        <div class="search">
+            <input class="floating-input" placeholder="Enter bitcoin address..." />
+            <button>🔍</button>
+        </div>
+
+
+        <div class="card">
+            <h3>Input Address</h3>
+            <div class="code">
+1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Assessment</h3>
+
+
+            <!-- <div class="code">
+{
+  "risk_score": 85,
+  "predicted_type": "RANSOMWARE",
+  "confidence": 0.82,
+  "recommendation": "DO_NOT_SEND"
+}
+      </div> -->
+
+            <div class="stats">
+                <div class="stat">
+                    <label>Risk Score</label>
+                    <strong>85</strong>
+                </div>
+
+                <div class="stat">
+                    <label>Predicted Type</label>
+                    <strong>RANSOMWARE</strong>
+                </div>
+
+                <div class="stat">
+                    <label>Confidence</label>
+                    <strong>0.82</strong>
+                </div>
+
+                <div class="stat">
+                    <label>Recommendation</label>
+                    <strong class="danger">⚠ DO_NOT_SEND</strong>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-left">
+                © 2026 <strong>BitGuard</strong> — AI-Powered Risk Assessment
+            </div>
+
+            By Wes, Noah, Chirag, and Steven
+
+            <div class="footer-links">
+                <a href="#">Docs</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
