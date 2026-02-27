@@ -1,0 +1,7 @@
+services:
+  btc-app:
+    build: .
+    container_name: btc-app
+    restart: unless-stopped
+    ports:
+      - "80:8000"

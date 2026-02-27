@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}BitGuard – AI-Powered Risk Assessment{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <h1>
+    <span class="bit">Bit</span><span class="guard">Guard</span>
+  </h1>
+
+  <p class="tagline">AI-Powered Risk Assessment</p>
+
+  <div class="search">
+    <input id="addressInput" placeholder="Enter bitcoin address..." />
+    <button id="searchBtn">🔍</button>
+  </div>
+
+  <div class="card">
+    <h3>Input Address</h3>
+    <div class="code" id="addressPreview">
+      1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/app.js"></script>
+{% endblock %}
