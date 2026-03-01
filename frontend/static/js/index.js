@@ -6,7 +6,7 @@ const btn = document.getElementById("searchBtn");
 
 function updatePreview() {
   const value = input.value.trim();
-  preview.textContent = value || "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+  preview.textContent = value ? value : "No address entered yet...";
 }
 
 input.addEventListener("input", updatePreview);
