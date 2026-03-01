@@ -33,3 +33,26 @@ def blog(request: Request):
         "blog.html",
         {"request": request, "data": data}
     )
+
+@app.get("/about", response_class=HTMLResponse)
+def about(request: Request, response: HTMLResponse):
+    return templates.TemplateResponse(
+        "about.html",
+        {"request": request}
+    )
+
+@app.exception_handler(404)
+def not_found(request: Request, exc):
+    return templates.TemplateResponse(
+        "error/404.html",
+        {"request": request},
+        status_code=404
+    )   
+
+@app.exception_handler(500)
+def internal_error(request: Request, exc):
+    return templates.TemplateResponse(
+        "error/500.html",
+        {"request": request},
+        status_code=500
+    )
