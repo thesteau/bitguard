@@ -4,46 +4,49 @@
 
 {% block content %}
 <div class="container">
-
   <h1>
     <span class="bit">Bit</span><span class="guard">Guard</span>
   </h1>
 
-  <div class="search">
-    <input id="addressInput" placeholder="Enter a bitcoin address..." />
-    <button id="searchBtn">🔍</button>
+  <div class="search card">
+    <div class="search">
+      <form id="searchForm" class="searchForm">
+        <input id="addressInput" name="address" placeholder="Enter a bitcoin address..." />
+        <button id="searchBtn" type="submit" aria-label="Search">🔍</button>
+      </form>
+    </div>
   </div>
 
   <div class="card">
     <h3>Input Address</h3>
-      <div class="code" id="addressPreview">No address entered yet...</div>
+    <div class="code" id="addressPreview">No address entered yet...</div>
   </div>
 
   <div class="card">
     <h3>Assessment</h3>
     <div class="stats">
-        <div class="stat">
-            <label>Risk Score</label>
-            <strong>85</strong>
-        </div>
+      <div class="stat">
+        <label>Risk Score</label>
+        <strong id="riskScore">None</strong>
+      </div>
 
-        <div class="stat">
-            <label>Predicted Type</label>
-            <strong>RANSOMWARE</strong>
-        </div>
+      <div class="stat">
+        <label>Predicted Type</label>
+        <strong id="predictedType">None</strong>
+      </div>
 
-        <div class="stat">
-            <label>Confidence</label>
-            <strong>0.82</strong>
-        </div>
+      <div class="stat">
+        <label>Confidence</label>
+        <strong id="confidence">?.??</strong>
+      </div>
 
-        <div class="stat">
-            <label>Recommendation</label>
-            <strong class="danger">⚠ DO_NOT_SEND</strong>
-        </div>
+      <div class="stat">
+        <label>Recommendation</label>
+        <strong id="recommendation" class="danger">Unknown</strong>
+        <!-- danger, warn, success -->
+      </div>
     </div>
-</div>
-
+  </div>
 </div>
 {% endblock %}
 

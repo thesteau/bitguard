@@ -95,12 +95,6 @@ h1 {
 }
 
 /* SEARCH */
-.search {
-  margin-top: 40px;
-  display: flex;
-  gap: 12px;
-}
-
 .search input {
   flex: 1;
   background: var(--panel);
@@ -114,10 +108,65 @@ h1 {
 .search button {
   background: var(--accent);
   border: none;
-  border-radius: 14px;
-  padding: 0 22px;
-  font-size: 18px;
+  border-radius: 18px;
+
+  padding: 0 28px;
+  height: 56px;
+
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.search button:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.search button:active {
+  transform: scale(0.96);
+}
+
+.search {
+  width: 100%;
+}
+
+.searchForm {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.searchForm #addressInput {
+  flex: 1 1 0;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+}
+
+.searchForm #searchBtn {
+  flex: 0 0 auto;
+  margin-left: 12px;
+}
+
+.searchForm {
+  gap: 0;
+}
+
+.searchForm #addressInput {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.searchForm #searchBtn {
+  margin-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 
 /* CARD */
