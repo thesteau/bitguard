@@ -14,12 +14,14 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse(
         "index.html",
         {"request": request}
     )
+
 
 @app.get("/blog", response_class=HTMLResponse)
 def blog(request: Request):
@@ -34,12 +36,54 @@ def blog(request: Request):
         {"request": request, "data": data}
     )
 
+
 @app.get("/about", response_class=HTMLResponse)
-def about(request: Request, response: HTMLResponse):
+def about(request: Request):
     return templates.TemplateResponse(
         "about.html",
         {"request": request}
     )
+
+
+@app.get("/pricing", response_class=HTMLResponse)
+def pricing(request: Request):
+    return templates.TemplateResponse(
+        "pricing.html",
+        {"request": request}
+    )
+
+
+@app.get("/contact", response_class=HTMLResponse)
+def contact(request: Request):
+    return templates.TemplateResponse(
+        "contact.html",
+        {"request": request}
+    )
+
+
+@app.get("/privacy", response_class=HTMLResponse)
+def privacy(request: Request):
+    return templates.TemplateResponse(
+        "privacy.html",
+        {"request": request}
+    )
+
+
+@app.get("/signup", response_class=HTMLResponse)
+def signup(request: Request):
+    return templates.TemplateResponse(
+        "signup.html",
+        {"request": request}
+    )
+
+
+@app.get("/login", response_class=HTMLResponse)
+def login(request: Request):
+    return templates.TemplateResponse(
+        "login.html",
+        {"request": request}
+    )
+
 
 @app.exception_handler(404)
 def not_found(request: Request, exc):
@@ -47,7 +91,8 @@ def not_found(request: Request, exc):
         "error/404.html",
         {"request": request},
         status_code=404
-    )   
+    )
+
 
 @app.exception_handler(500)
 def internal_error(request: Request, exc):
