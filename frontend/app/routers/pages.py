@@ -12,21 +12,15 @@ async def index(request: Request):
     return {}
 
 
-@router.get("/about", response_class=HTMLResponse)
-@template("pages/about.html")
-async def about(request: Request):
-    return {}
-
-
 @router.get("/pricing", response_class=HTMLResponse)
 @template("pages/pricing.html")
 async def pricing(request: Request):
     return {}
 
 
-@router.get("/howto", response_class=HTMLResponse)
-@template("pages/howto.html")
-async def howto(request: Request):
+@router.get("/guide", response_class=HTMLResponse)
+@template("pages/guide.html")
+async def guide(request: Request):
     return {}
 
 
@@ -37,6 +31,12 @@ async def login(request: Request):
 
 
 # Footer
+@router.get("/about", response_class=HTMLResponse)
+@template("pages/about.html")
+async def about(request: Request):
+    return {}
+
+
 @router.get("/contact", response_class=HTMLResponse)
 @template("pages/contact.html")
 async def contact(request: Request):
