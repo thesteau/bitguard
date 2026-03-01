@@ -10,9 +10,10 @@ router = APIRouter()
 
 class SubmitRequest(BaseModel):
     address: str = Field(min_length=1)
+    depth: int = 0
 
 
-def validate_address(address: str):
+def validate_address(address: str, depth: int):
     # Placeholder for real validation logic
     # Request send to link
 
@@ -23,7 +24,7 @@ def validate_address(address: str):
     return risk_score, predicted_type, confidence, recommendation
 
 
-def validate_address_mock(address: str):
+def validate_address_mock(address: str, depth: int):
     # Mock validation logic: 90% chance of being valid
     # ---- MOCK LOGIC ----
     mocked_types = [
@@ -48,11 +49,12 @@ def validate_address_mock(address: str):
 @router.post("/submit")
 async def submit(req: SubmitRequest):
     address = req.address.strip()
+    depth = req.depth
 
     if not address:
         raise HTTPException(status_code=400, detail="Address is required")
 
-    risk_score, predicted_type, confidence, recommendation = validate_address_mock(address)
+    risk_score, predicted_type, confidence, recommendation = validate_address_mock(address, depth)
 
     return {
         "risk_score": risk_score,

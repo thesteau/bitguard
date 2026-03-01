@@ -4,6 +4,7 @@ const form = document.getElementById("searchForm");
 const input = document.getElementById("addressInput");
 const preview = document.getElementById("addressPreview");
 const btn = document.getElementById("searchBtn");
+const depthSelect = document.getElementById("depthSelect");
 
 const riskScoreEl = document.getElementById("riskScore");
 const predictedTypeEl = document.getElementById("predictedType");
@@ -12,7 +13,7 @@ const recommendationEl = document.getElementById("recommendation");
 
 function updatePreview() {
   const value = input.value.trim();
-  preview.textContent = value ? value : "No address entered yet...";
+  preview.textContent = value ? value : "Enter a new valid bitcoin address...";
 }
 
 function setEmpty() {
@@ -70,6 +71,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const address = input.value.trim();
+  const depth = Number(depthSelect?.value ?? 0);
   updatePreview();
 
   if (!address) {
@@ -83,7 +85,7 @@ form.addEventListener("submit", async (e) => {
     const res = await fetch("/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address }),
+      body: JSON.stringify({ address, depth }),
     });
 
     const payload = await res.json();

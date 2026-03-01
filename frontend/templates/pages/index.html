@@ -8,11 +8,28 @@
     <span class="bit">Bit</span><span class="guard">Guard</span>
   </h1>
 
+  <div>
+    <p>On-chain risk intelligence </p>
+    <p>for Bitcoin wallets</p>
+    <p>Graph-native behavioral scoring. 0–100. Structured signals.</p>
+    <p>Built for compliance teams, DeFi protocols, and hobbyists.</p>
+  </div>
+
   <div class="search card">
     <div class="search">
       <form id="searchForm" class="searchForm">
+
         <input id="addressInput" name="address" placeholder="Enter a bitcoin address..." />
-        <button id="searchBtn" type="submit" aria-label="Search">🔍</button>
+
+        <select id="depthSelect" name="depth" class="depth-select">
+          <option value="0" selected>Depth 0</option>
+          <option value="1">Depth 1</option>
+          <option value="2">Depth 2</option>
+          <option value="3">Depth 3</option>
+        </select>
+
+        <button id="searchBtn" type="submit">🔍</button>
+
       </form>
     </div>
   </div>

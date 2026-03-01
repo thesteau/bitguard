@@ -24,6 +24,19 @@ async def pricing(request: Request):
     return {}
 
 
+@router.get("/howto", response_class=HTMLResponse)
+@template("pages/howto.html")
+async def howto(request: Request):
+    return {}
+
+
+@router.get("/login", response_class=HTMLResponse)
+@template("pages/login.html")
+async def login(request: Request):
+    return {}
+
+
+# Footer
 @router.get("/contact", response_class=HTMLResponse)
 @template("pages/contact.html")
 async def contact(request: Request):
@@ -33,10 +46,4 @@ async def contact(request: Request):
 @router.get("/privacy", response_class=HTMLResponse)
 @template("pages/privacy.html")
 async def privacy(request: Request):
-    return {}
-
-
-@router.get("/login", response_class=HTMLResponse)
-@template("pages/login.html")
-async def login(request: Request):
     return {}
