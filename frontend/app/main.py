@@ -18,7 +18,7 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     return templates.TemplateResponse(
-        "index.html",
+        "pages/index.html",
         {"request": request}
     )
 
@@ -32,7 +32,7 @@ def blog(request: Request):
     }
 
     return templates.TemplateResponse(
-        "blog.html",
+        "pages/blog.html",
         {"request": request, "data": data}
     )
 
@@ -40,7 +40,7 @@ def blog(request: Request):
 @app.get("/about", response_class=HTMLResponse)
 def about(request: Request):
     return templates.TemplateResponse(
-        "about.html",
+        "pages/about.html",
         {"request": request}
     )
 
@@ -48,7 +48,7 @@ def about(request: Request):
 @app.get("/pricing", response_class=HTMLResponse)
 def pricing(request: Request):
     return templates.TemplateResponse(
-        "pricing.html",
+        "pages/pricing.html",
         {"request": request}
     )
 
@@ -56,7 +56,7 @@ def pricing(request: Request):
 @app.get("/contact", response_class=HTMLResponse)
 def contact(request: Request):
     return templates.TemplateResponse(
-        "contact.html",
+        "pages/contact.html",
         {"request": request}
     )
 
@@ -64,7 +64,7 @@ def contact(request: Request):
 @app.get("/privacy", response_class=HTMLResponse)
 def privacy(request: Request):
     return templates.TemplateResponse(
-        "privacy.html",
+        "pages/privacy.html",
         {"request": request}
     )
 
@@ -72,7 +72,7 @@ def privacy(request: Request):
 @app.get("/signup", response_class=HTMLResponse)
 def signup(request: Request):
     return templates.TemplateResponse(
-        "signup.html",
+        "pages/signup.html",
         {"request": request}
     )
 
@@ -80,7 +80,7 @@ def signup(request: Request):
 @app.get("/login", response_class=HTMLResponse)
 def login(request: Request):
     return templates.TemplateResponse(
-        "login.html",
+        "pages/login.html",
         {"request": request}
     )
 
