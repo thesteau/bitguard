@@ -13,4 +13,5 @@ async def internal_error(request: Request, exc):
 
 def register_exception_handlers(app):
     app.add_exception_handler(404, not_found)
+    app.add_exception_handler(405, not_found)  # 405 - users use the get on post endpoint
     app.add_exception_handler(500, internal_error)
