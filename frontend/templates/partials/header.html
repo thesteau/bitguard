@@ -1,20 +1,50 @@
 <header>
-  <div class="nav">
-    <div class="brand">
-      <a href="/"><img src="/static/img/bitguard.png" alt="BitGuard logo" class="logo-img">
-      </a>
-      <span class="brand-text">
-        <span class="bit">Bit</span><span class="guard">Guard</span><span class="tagline"> — AI-Powered Risk Assessment</span>
-      </span>
-    </div>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
 
-    <nav>
-      <a href="/" class="btn">Home</a>
-      <!-- <a href="/pricing" class="btn">Pricing</a> -->
-      <!-- <a href="/blog" class="btn">Blog</a> -->
-      <a href="/guide" class="btn">Guides</a>
-      <a href="https://github.com/thesteau/btc" target="_blank" class="btn">Github</a>
-      <a href="/login" class="btn primary">Sign Up/Login</a>
-    </nav>
-  </div>
+      <a class="navbar-brand mx-auto d-lg-none text-center" href="/">
+        <img src="/static/img/bitguard.png" alt="BitGuard logo" height="32">
+        <div>
+          <span class="bit">Bit</span><span class="guard">Guard</span>
+        </div>
+      </a>
+
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-center text-center" id="mainNavbar">
+
+        <a class="navbar-brand d-none d-lg-flex align-items-center me-4" href="/">
+          <img src="/static/img/bitguard.png" alt="BitGuard logo" height="32">
+          <span class="ms-2">
+            <span class="bit">Bit</span><span class="guard">Guard</span>
+          </span>
+        </a>
+
+        <ul class="navbar-nav align-items-center gap-lg-4">
+
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/guide">Guides</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/thesteau/btc" target="_blank">Github</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link fw-semibold" href="/login">Sign Up / Login</a>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
 </header>
