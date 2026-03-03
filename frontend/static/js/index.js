@@ -7,7 +7,7 @@ const btn = document.getElementById("searchBtn");
 const depthSelect = document.getElementById("depthSelect");
 
 const riskScoreEl = document.getElementById("riskScore");
-const predictedTypeEl = document.getElementById("predictedType");
+// const predictedTypeEl = document.getElementById("predictedType");
 const confidenceEl = document.getElementById("confidence");
 const recommendationEl = document.getElementById("recommendation");
 
@@ -18,7 +18,7 @@ function updatePreview() {
 
 function setEmpty() {
   riskScoreEl.textContent = "None";
-  predictedTypeEl.textContent = "None";
+  // predictedTypeEl.textContent = "None";
   confidenceEl.textContent = "?.??";
   recommendationEl.textContent = "Unknown";
   recommendationEl.className = "danger";
@@ -29,7 +29,7 @@ function setLoading() {
   btn.textContent = "…";
 
   riskScoreEl.textContent = "…";
-  predictedTypeEl.textContent = "…";
+  // predictedTypeEl.textContent = "…";
   confidenceEl.textContent = "…";
   recommendationEl.textContent = "Checking…";
   recommendationEl.className = "warn";
@@ -42,7 +42,7 @@ function clearLoading() {
 
 function setResult(data) {
   riskScoreEl.textContent = data.risk_score ?? "None";
-  predictedTypeEl.textContent = data.predicted_type ?? "None";
+  // predictedTypeEl.textContent = data.predicted_type ?? "None";
 
   confidenceEl.textContent =
     data.confidence !== undefined && data.confidence !== null
