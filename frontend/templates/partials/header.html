@@ -1,15 +1,20 @@
-<header>
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container justify-content-center">
+{% block link %}
+<link rel="stylesheet" href="/static/css/header.css">
+{% endblock %}
 
-      <a class="navbar-brand d-flex align-items-center gap-2 me-lg-4" href="/">
+<header class="header-inner">
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container-fluid">
+
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
         <img src="/static/img/bitguard.png" alt="BitGuard logo" height="32">
         <span>
-          <span class="bit">Bit</span><span class="guard">Guard</span> - AI Powered Risk Assessment
+          <span class="bit">Bit</span><span class="guard">Guard</span>
+          <span class="d-none d-xl-inline"> – AI Powered Risk Assessment</span>
         </span>
       </a>
 
-      <button class="navbar-toggler ms-auto d-lg-none" type="button"
+      <button class="navbar-toggler" type="button"
         data-bs-toggle="collapse"
         data-bs-target="#mainNavbar"
         aria-controls="mainNavbar"
@@ -18,25 +23,20 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse justify-content-center" id="mainNavbar">
-        <ul class="navbar-nav align-items-center gap-lg-4 text-center">
-
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 text-center text-lg-start gap-lg-4">
           <li class="nav-item">
             <a class="nav-link" href="/">Home</a>
           </li>
-
           <li class="nav-item">
             <a class="nav-link" href="/guide">Guides</a>
           </li>
-
           <li class="nav-item">
             <a class="nav-link" href="https://github.com/thesteau/btc" target="_blank">Github</a>
           </li>
-<!-- 
           <li class="nav-item">
             <a class="nav-link fw-semibold" href="/login">Sign Up / Login</a>
-          </li> -->
-
+          </li>
         </ul>
       </div>
 
