@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Page Not Found{% endblock %}
+
+{% block content %}
+  <div class="error-page">
+    <h1>404 - Page Not Found</h1>
+    <p>Sorry, the page you are looking for does not exist.</p>
+    <a href="/" class="bg-btn primary">Go to Home Page</a>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/errors.js"></script>
+{% endblock %}
