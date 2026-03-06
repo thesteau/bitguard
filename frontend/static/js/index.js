@@ -105,3 +105,29 @@ form.addEventListener("submit", async (e) => {
 
   clearLoading();
 });
+
+document.getElementById("searchForm").addEventListener("submit", function(e) {
+
+  const input = document.getElementById("addressInput");
+  const addr = input.value.trim();
+
+  if (!(addr.startsWith("bc1") || addr.startsWith("1") || addr.startsWith("3"))) {
+    e.preventDefault();
+
+    const alertContainer = document.getElementById("formAlert");
+
+    alertContainer.innerHTML = `
+      <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+        ⚠️ Please enter a valid Bitcoin address.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    `;
+
+    input.focus();
+
+    setTimeout(() => {
+      alertContainer.innerHTML = "";
+    }, 10000);
+  }
+
+});
