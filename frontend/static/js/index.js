@@ -91,6 +91,8 @@ form.addEventListener("submit", async (e) => {
     const payload = await res.json();
 
     if (!res.ok) {
+      recommendationEl.textContent = `Error`;
+      recommendationEl.className = "danger";
       clearLoading();
       return;
     }
