@@ -5,6 +5,11 @@ import requests
 
 from ..environments import environments as envs
 
+
+MAX_ADDRESS_LEN = 120
+ALLOWED_DEPTHS = {0, 1, 2, 3}
+
+
 router = APIRouter()
 
 
@@ -46,6 +51,18 @@ def validate_address_mock(address: str, depth: int):
     return risk_score, predicted_type, confidence, recommendation
 
 
+def is_allowed_address(address: str) -> bool:
+    a = address.strip().lower()
+
+    if not a:
+        return False
+
+    if len(a) > MAX_ADDRESS_LEN:
+        return False
+
+    return a.startswith("bc1") or a.startswith("1") or a.startswith("3")
+
+
 @router.post("/submit")
 async def submit(req: SubmitRequest):
     address = req.address.strip()
@@ -53,6 +70,15 @@ async def submit(req: SubmitRequest):
 
     if not address:
         raise HTTPException(status_code=400, detail="Address is required")
+
+    if not is_allowed_address(address):
+        raise HTTPException(
+            status_code=400,
+            detail="Address must start with bc1, 1, or 3"
+        )
+
+    if depth not in ALLOWED_DEPTHS:
+        raise HTTPException(status_code=400, detail="Invalid depth")
 
     risk_score, predicted_type, confidence, recommendation = validate_address_mock(address, depth)
 

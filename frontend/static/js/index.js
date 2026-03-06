@@ -106,28 +106,62 @@ form.addEventListener("submit", async (e) => {
   clearLoading();
 });
 
-document.getElementById("searchForm").addEventListener("submit", function(e) {
+function showFormAlert(message) {
+  const alertContainer = document.getElementById("formAlert");
+
+  alertContainer.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  `;
+
+  setTimeout(() => {
+    alertContainer.innerHTML = "";
+  }, 5000);
+}
+
+document.getElementById("searchForm").addEventListener("submit", async function(e) {
+
+  e.preventDefault();
 
   const input = document.getElementById("addressInput");
+  const depth = document.getElementById("depthSelect").value;
   const addr = input.value.trim();
 
   if (!(addr.startsWith("bc1") || addr.startsWith("1") || addr.startsWith("3"))) {
-    e.preventDefault();
-
-    const alertContainer = document.getElementById("formAlert");
-
-    alertContainer.innerHTML = `
-      <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-        ⚠️ Please enter a valid Bitcoin address.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
-    `;
-
+    showFormAlert("Please enter a valid Bitcoin address starting with a 1, 3, or bc1.");
     input.focus();
+    return;
+  }
 
-    setTimeout(() => {
-      alertContainer.innerHTML = "";
-    }, 10000);
+  try {
+    const response = await fetch("/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        address: addr,
+        depth: parseInt(depth, 10)
+      })
+    });
+
+    if (!response.ok) {
+
+      let message = "Server returned an error.";
+
+      const data = await response.json();
+      if (data.detail) {
+        message = data.detail;
+      }
+
+      showFormAlert(message);
+      return;
+    }
+
+  } catch (err) {
+    showFormAlert("Could not reach the server. Please try again.");
   }
 
 });
