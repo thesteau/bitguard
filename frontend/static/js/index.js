@@ -67,14 +67,37 @@ function setResult(data) {
 
 input.addEventListener("input", updatePreview);
 
+function showFormAlert(message) {
+  const alertContainer = document.getElementById("formAlert");
+
+  alertContainer.innerHTML = `
+    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  `;
+
+  setTimeout(() => {
+    alertContainer.innerHTML = "";
+  }, 5000);
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const address = input.value.trim();
   const depth = Number(depthSelect?.value ?? 0);
+
   updatePreview();
 
   if (!address) {
+    setEmpty();
+    return;
+  }
+
+  if (!(address.startsWith("bc1") || address.startsWith("1") || address.startsWith("3"))) {
+    showFormAlert("Please enter a valid Bitcoin address starting with a 1, 3, or bc1.");
+    input.focus();
     setEmpty();
     return;
   }
@@ -91,76 +114,20 @@ form.addEventListener("submit", async (e) => {
     const payload = await res.json();
 
     if (!res.ok) {
-      recommendationEl.textContent = `Error`;
+      const message = payload.detail || "Server returned an error.";
+      showFormAlert(message);
+      recommendationEl.textContent = "Error";
       recommendationEl.className = "danger";
-      clearLoading();
       return;
     }
 
     setResult(payload);
   } catch (err) {
-    console.error("Error submitting form:", err);
-  }
-
-  clearLoading();
-});
-
-function showFormAlert(message) {
-  const alertContainer = document.getElementById("formAlert");
-
-  alertContainer.innerHTML = `
-    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-  `;
-
-  setTimeout(() => {
-    alertContainer.innerHTML = "";
-  }, 5000);
-}
-
-document.getElementById("searchForm").addEventListener("submit", async function(e) {
-
-  e.preventDefault();
-
-  const input = document.getElementById("addressInput");
-  const depth = document.getElementById("depthSelect").value;
-  const addr = input.value.trim();
-
-  if (!(addr.startsWith("bc1") || addr.startsWith("1") || addr.startsWith("3"))) {
-    showFormAlert("Please enter a valid Bitcoin address starting with a 1, 3, or bc1.");
-    input.focus();
-    return;
-  }
-
-  try {
-    const response = await fetch("/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        address: addr,
-        depth: parseInt(depth, 10)
-      })
-    });
-
-    if (!response.ok) {
-
-      let message = "Server returned an error.";
-
-      const data = await response.json();
-      if (data.detail) {
-        message = data.detail;
-      }
-
-      showFormAlert(message);
-      return;
-    }
-
-  } catch (err) {
     showFormAlert("Could not reach the server. Please try again.");
+    recommendationEl.textContent = "Error";
+    recommendationEl.className = "danger";
+    console.error("Error submitting form:", err);
+  } finally {
+    clearLoading();
   }
-
 });
