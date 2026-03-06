@@ -91,16 +91,13 @@ form.addEventListener("submit", async (e) => {
     const payload = await res.json();
 
     if (!res.ok) {
-      recommendationEl.textContent = payload?.detail || `Error (${res.status})`;
-      recommendationEl.className = "danger";
       clearLoading();
       return;
     }
 
     setResult(payload);
   } catch (err) {
-    recommendationEl.textContent = "Network error";
-    recommendationEl.className = "danger";
+    console.error("Error submitting form:", err);
   }
 
   clearLoading();
