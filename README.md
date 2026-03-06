@@ -10,6 +10,9 @@
 ### Instance type
 - r7i.8xlarge (main)
 
+## Architecture and Flow
+
+
 ## Base EC2 storage location for neo4j
 /data/neo4j
 
