@@ -1,10 +1,15 @@
 import random
+import json
+
 from pydantic import BaseModel, Field
 from fastapi import APIRouter, HTTPException
 import requests
+import redis
 
 from ..environments import environments as envs
 
+
+r = redis.Redis(host="redis", port=6379, decode_responses=True)
 
 MAX_ADDRESS_LEN = 120
 ALLOWED_DEPTHS = {0, 1, 2, 3}
@@ -65,26 +70,30 @@ def is_allowed_address(address: str) -> bool:
 
 @router.post("/submit")
 async def submit(req: SubmitRequest):
-    address = req.address.strip()
+    address = req.address.strip().lower()
     depth = req.depth
 
     if not address:
         raise HTTPException(status_code=400, detail="Address is required")
 
-    if not is_allowed_address(address):
-        raise HTTPException(
-            status_code=400,
-            detail="Address must start with bc1, 1, or 3"
-        )
+    if not (address.startswith("bc1") or address.startswith("1") or address.startswith("3")):
+        raise HTTPException(status_code=400, detail="Address must start with bc1, 1, or 3")
 
-    if depth not in ALLOWED_DEPTHS:
-        raise HTTPException(status_code=400, detail="Invalid depth")
+    cache_key = f"btc:{address}:{depth}"
+
+    cached = r.get(cache_key)
+    if cached:
+        return json.loads(cached)
 
     risk_score, predicted_type, confidence, recommendation = validate_address_mock(address, depth)
 
-    return {
+    result = {
         "risk_score": risk_score,
         "predicted_type": predicted_type,
         "confidence": confidence,
         "recommendation": recommendation
     }
+
+    r.setex(cache_key, 259200, json.dumps(result))
+
+    return result
