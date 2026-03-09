@@ -55,6 +55,7 @@ U[User]
 subgraph Oracle["<span style='color:#2c7be5'>Oracle Cloud (Frontend)</span>"]
     FE[Frontend Web App]
     SUBMIT["/submit Endpoint"]
+    CACHE[(Redis Cache)]
 end
 
 subgraph AWS["<span style='color:#e67e22'>AWS EC2 Instance (Backend)</span>"]
@@ -73,7 +74,8 @@ SUBMIT --> API
 API --> DB
 DB --> API
 API --> R
-R --> FE
+R --> CACHE
+CACHE --> FE
 FE --> U
 ```
 
