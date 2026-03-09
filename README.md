@@ -70,7 +70,8 @@ R[Response Results]
 
 U --> FE
 FE --> SUBMIT
-SUBMIT --> API
+SUBMIT --> CACHE
+CACHE --> API
 API --> DB
 DB --> API
 API --> R
