@@ -13,7 +13,7 @@ r = redis.Redis(host="redis", port=6379, decode_responses=True)
 
 MAX_ADDRESS_LEN = 120
 ALLOWED_DEPTHS = {0, 1, 2, 3}
-
+BACKEND_URL = envs.BACKEND_URL
 
 router = APIRouter()
 
@@ -31,6 +31,25 @@ def validate_address(address: str, depth: int):
     risk_score = 85
     predicted_type = "RANSOMWARE"
     confidence = 0.95
+
+    try:
+        res = requests.post(f"{BACKEND_URL}/validate", json={"address": address, "depth": depth})
+        if res.status_code == 200:
+            data = res.json()
+            risk_score = data.get("risk_score", risk_score)
+            predicted_type = data.get("predicted_type", predicted_type)
+            confidence = data.get("confidence", confidence)
+
+            if risk_score >= 80:
+                recommendation = "DO_NOT_SEND"
+            elif risk_score >= 50:
+                recommendation = "CAUTION"
+            else:
+                recommendation = "SAFE"
+    except:
+        # In case of any error, return the default mocked values
+        pass
+
     return risk_score, predicted_type, confidence, recommendation
 
 
