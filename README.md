@@ -1,11 +1,11 @@
 # BitGuard
-
+A bitcoin wallet address risk assement score.
 
 ## Teammates
--
--
--
--
+- Chirag Agarwal
+- Noah Cederholm
+- Steven Au
+- Wes Morberg
 
 ### Instance type
 - r7i.8xlarge (main)
