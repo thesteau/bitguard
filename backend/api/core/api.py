@@ -12,10 +12,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# return 404 for this route
 @app.get("/")
 def read_root():
     return {"message": "Hello, World!"}
 
+# Model route
 @app.post("/validate")
 def validate_address():
     return {"status": "ok"}
