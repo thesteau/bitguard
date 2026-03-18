@@ -2,8 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import pickle
+import os
 
-with open('model/bitguard_lightgbm.pkl', 'rb') as f:
+# Load model from the model directory
+model_path = os.path.join(os.path.dirname(__file__), 'model', 'bitguard_lightgbm.pkl')
+with open(model_path, 'rb') as f:
     model = pickle.load(f)
 
 app = FastAPI()

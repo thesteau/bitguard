@@ -5,12 +5,13 @@ set -e
 # Update package list
 sudo apt-get update
 
-# Install Docker
+# Install Docker and dependencies
 sudo apt-get install -y \
     ca-certificates \
     curl \
     gnupg \
-    lsb-release
+    lsb-release \
+    git
 
 # Add Docker’s official GPG key
 sudo mkdir -p /etc/apt/keyrings
@@ -29,7 +30,8 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 sudo systemctl enable docker
 sudo systemctl start docker
 
-# Install Tailscale
-curl -fsSL https://tailscale.com/install.sh | sudo bash
+# Add current user to docker group (optional, allows docker commands without sudo)
+# Note: User will need to log out and log back in for group changes to take effect
+sudo usermod -aG docker ubuntu
 
-echo "Docker and Tailscale setup complete."
+echo "Docker and dependencies setup complete."
