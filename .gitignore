@@ -208,3 +208,4 @@ __marimo__/
 
 .pkl
 backend/api/core/bitguard_lightgbm.pkl
+backend/api/core/model/bitguard_lightgbm.pkl

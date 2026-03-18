@@ -3,7 +3,7 @@ services:
     build: .
     container_name: btc-api
     ports:
-      - "8000:8000"
+      - "8444:8444"
     env_file:
       - .env
     volumes:

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import pickle
 
-with open('bitguard_lightgbm.pkl', 'rb') as f:
+with open('model/bitguard_lightgbm.pkl', 'rb') as f:
     model = pickle.load(f)
 
 app = FastAPI()
