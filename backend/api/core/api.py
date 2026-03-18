@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from model.loader import load_model
+import environments.environments as env
+from model.loader import BitGuard
+from core.routers import include_routers
 
-model = load_model()
 
 app = FastAPI()
+app.state.bitguard_model = BitGuard(env.MODEL_PATH)
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,30 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-# return 404 for this route
-@app.get("/")
-def read_root():
-    return {"message": "Hello, World!"}
-
-
-# Model route
-@app.post("/validate")
-def validate_address():
-    # # X must have these columns in this order:
-    # feature_cols = [
-    #     'in_degree', 'out_degree', 'total_degree',
-    #     'total_received_btc', 'total_sent_btc',
-    #     'avg_received_btc', 'avg_sent_btc', 'balance',
-    #     'equal_output_count', 'suspicious_blocks', 'max_equal_outputs', 'fan_in_out_ratio',
-    #     'lifetime_blocks', 'tx_frequency',
-    #     'dust_tx_count', 'dust_ratio', 'round_number_ratio', 'amount_variance',
-    #     'has_dust_attack', 'has_round_laundering'
-    # ]
-
-    # # 0 = bad, 100 = safe
-    # scores = model.predict_score(X)  # X must be StandardScaler-transformed
-    return {"status": "ok"}
+include_routers(app)
 
 
 if __name__ == "__main__":

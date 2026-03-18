@@ -10,6 +10,6 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.state.templates = Jinja2Templates(directory="templates")
 
-include_routers(app)  # pull everything from routers in one call
+include_routers(app)
 
 register_exception_handlers(app)
