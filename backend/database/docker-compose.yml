@@ -1,0 +1,9 @@
+services:
+  database-api:
+    build: .
+    container_name: btc-database-api
+    env_file:
+      - .env
+    ports:
+      - "8450:8450"
+    restart: unless-stopped
