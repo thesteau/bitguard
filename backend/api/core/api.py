@@ -1,13 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import pickle
-import os
+from model.loader import load_model
 
-# Load model from the model directory
-model_path = os.path.join(os.path.dirname(__file__), 'model', 'bitguard_lightgbm.pkl')
-with open(model_path, 'rb') as f:
-    model = pickle.load(f)
+model = load_model()
 
 app = FastAPI()
 
@@ -46,4 +42,4 @@ def validate_address():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8444)
