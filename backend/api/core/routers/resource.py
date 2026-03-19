@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 import requests
-import ...environments.environments as envs
+from ..environments import environments as envs
 
 router = APIRouter()
 
