@@ -2,19 +2,20 @@ import os
 from fastapi import FastAPI, Request
 from pathlib import Path
 from neo4j import GraphDatabase
+from .environments import environments as envs
 
 app = FastAPI()
 
-DATABASE = os.getenv("NEO4J_DATABASE", "neo4j")
+DATABASE = envs.NEO4J_DATABASE
 query = Path("queries/base_query.cypher").read_text(encoding="utf-8")
 
 
 # Create driver once
 driver = GraphDatabase.driver(
-    os.getenv("NEO4J_URI"),
+    envs.NEO4J_URI,
     auth=(
-        os.getenv("NEO4J_USERNAME"),
-        os.getenv("NEO4J_PASSWORD"),
+        envs.NEO4J_USERNAME,
+        envs.NEO4J_PASSWORD,
     ),
 )
 
