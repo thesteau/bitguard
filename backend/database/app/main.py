@@ -18,6 +18,10 @@ driver = GraphDatabase.driver(
     ),
 )
 
+@app.get("/test")
+async def test_connection():
+    return {"message": "Connection to database successful!"}
+
 @app.post("/query")
 async def query_database(request: Request):
     body = await request.json()
