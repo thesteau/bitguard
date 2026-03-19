@@ -56,6 +56,13 @@ def validate_address(address: str, depth: int):
 def validate_address_mock(address: str, depth: int):
     # Mock validation logic: 90% chance of being valid
     # ---- MOCK LOGIC ----
+
+    res = requests.get(BACKEND_URL)
+    if res.status_code == 200:
+        print(res.text)
+    else:
+        print(f"Error connecting to backend: {res.status_code}, {res.text}")
+
     mocked_types = [
         "RANSOMWARE",
         "UNKNOWN",
