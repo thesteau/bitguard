@@ -33,6 +33,13 @@ def read_root():
     return {"message": "Hello, World!"}
 
 
+@router.post("/")
+def create_root(request: Request):
+    request.app.state.logger.info("Received POST request at / with body: %s", request.body())
+    # For debugging requests from the frontend
+    return {"message": "Hello, World!"}
+
+
 # Model route
 @router.post("/validate")
 def validate_address(payload: ValidationFeatures, request: Request):

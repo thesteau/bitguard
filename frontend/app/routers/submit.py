@@ -59,9 +59,17 @@ def validate_address_mock(address: str, depth: int):
 
     res = requests.get(BACKEND_URL)
     if res.status_code == 200:
+        print("Successfully connected to backend")
         print(res.text)
     else:
         print(f"Error connecting to backend: {res.status_code}, {res.text}")
+
+    res2 = requests.post(f"{BACKEND_URL}/", json={"test": "data"})
+    if res2.status_code == 200:
+        print("Successfully sent POST request to backend")
+        print(res2.text)
+    else:
+        print(f"Error sending POST request to backend: {res2.status_code}, {res2.text}")
 
     mocked_types = [
         "RANSOMWARE",
