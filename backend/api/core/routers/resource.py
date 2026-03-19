@@ -35,7 +35,7 @@ def read_root():
 
 @router.post("/")
 def create_root(request: Request):
-    request.app.state.logger.info("Received POST request at / with body: %s", request.body())
+    print("Received POST request at / with body:", request.body())
     # For debugging requests from the frontend
     return {"message": "Hello, World!"}
 
