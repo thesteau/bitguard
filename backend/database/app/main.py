@@ -7,10 +7,9 @@ from .environments import environments as envs
 app = FastAPI()
 
 DATABASE = envs.NEO4J_DATABASE
-query = Path("queries/base_query.cypher").read_text(encoding="utf-8")
 
 
-# Create driver once
+# Create neo4j driver
 driver = GraphDatabase.driver(
     envs.NEO4J_URI,
     auth=(
@@ -18,27 +17,27 @@ driver = GraphDatabase.driver(
         envs.NEO4J_PASSWORD,
     ),
 )
+query = Path("queries/base_query.cypher").read_text(encoding="utf-8")
+
 
 @app.get("/test")
 async def test_connection():
     return {"message": "Connection to database successful!"}
 
-@app.get("/test2")
-async def test_connection2():
-    parameters = {"seed_parameter": envs.TEST_SEED}
-    with driver.session(database=DATABASE) as session:
-        result = session.run(query, parameters)
-        records = [record.data() for record in result]
 
-    return {"records": records}
+@app.post("/test")  # Path echo
+async def test_query_database(request: Request):
+    parameter = await request.json()
+
+    return parameter
+
 
 @app.post("/query")
 async def query_database(request: Request):
-    body = await request.json()
-    parameters = body.get("parameters", {})
+    parameter = await request.json()
 
     with driver.session(database=DATABASE) as session:
-        result = session.run(query, parameters)
+        result = session.run(query, parameter)
         records = [record.data() for record in result]
 
-    return {"records": records}
+    return records

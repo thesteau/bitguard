@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
+from ..helpers.database import get_data_from_database
 
 
 router = APIRouter()
@@ -28,9 +29,15 @@ class ValidationFeatures(BaseModel):
     has_round_laundering: float
 
 
+class ValidationRequest(BaseModel):
+    seed_parameter: str
+
+
 # Model route
 @router.post("/validate")
-def validate_address(payload: ValidationFeatures, request: Request):
+async def validate_address(payload: ValidationRequest, request: Request):
     model = request.app.state.bitguard_model
-    score = model.predict_from_features(payload.model_dump())
-    return {"status": "ok", "score": score}
+
+    bitcoin_data = get_data_from_database(payload.model_dump())
+
+    return bitcoin_data.to_json(orient="records")
