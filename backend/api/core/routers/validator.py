@@ -38,6 +38,15 @@ class ValidationRequest(BaseModel):
 async def validate_address(payload: ValidationRequest, request: Request):
     model = request.app.state.bitguard_model
 
+    # Data base request code
     bitcoin_data = get_data_from_database(payload.model_dump())
 
-    return bitcoin_data.to_json(orient="records")
+    # Data transformation Code - Pipeline Code
+    transformed_df = bitcoin_data.to_json(orient="records")  # PLACE HOLDER
+    # data_transform
+
+    # Model Code
+    # result =model.predict_from_features(transformed_df)
+
+    result = transformed_df  # PLACE HOLDER
+    return result
