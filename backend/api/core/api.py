@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import environments.environments as env
+from core.environments import environments as env
 from model.loader import BitGuard
 from core.routers import include_routers
 
