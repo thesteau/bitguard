@@ -18,7 +18,7 @@ async def create_root(request: Request):
 
 @router.get("/test")
 async def test_connection():
-    res = requests.get(f"{envs.BACKEND_URL}/test")
+    res = requests.get(f"{envs.DATABASE_URL}/test")
     if res.status_code == 200:
         print("Successfully connected to backend")
     else:
