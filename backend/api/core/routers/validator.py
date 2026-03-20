@@ -1,5 +1,9 @@
+import pandas as pd
+
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
+import requests
+from ..environments import environments as envs
 
 
 router = APIRouter()
@@ -28,9 +32,29 @@ class ValidationFeatures(BaseModel):
     has_round_laundering: float
 
 
+class ValidationRequest(BaseModel):
+    seed_parameter: str
+
+
+def get_data_from_database(payload: ValidationRequest):
+    body = payload.model_dump()
+
+    res = requests.post(f"{envs.DATABASE_URL}/query", json=body)
+    if res.status_code == 200:
+        print("Successfully connected to backend")
+    else:        
+        print(f"Error connecting to backend: {res.status_code}, {res.text}")
+
+    df = pd.read_json(res.text)
+    return df
+
 # Model route
 @router.post("/validate")
-def validate_address(payload: ValidationFeatures, request: Request):
+async def validate_address(payload: ValidationRequest, request: Request):
     model = request.app.state.bitguard_model
-    score = model.predict_from_features(payload.model_dump())
-    return {"status": "ok", "score": score}
+
+    
+    bitcoin_data = get_data_from_database(payload)
+
+
+    return bitcoin_data.to_json(orient="records")
