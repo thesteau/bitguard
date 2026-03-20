@@ -25,3 +25,13 @@ async def test_connection():
         print(f"Error connecting to backend: {res.status_code}, {res.text}")
 
     return res.json()
+
+@router.get("/test2")
+async def test_connection2():
+    res = requests.get(f"{envs.DATABASE_URL}/test2")
+    if res.status_code == 200:
+        print("Successfully connected to backend")
+    else:
+        print(f"Error connecting to backend: {res.status_code}, {res.text}")
+
+    return res.json()
