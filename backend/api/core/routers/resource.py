@@ -27,7 +27,7 @@ async def test_connection():
     return res.json()
 
 @router.get("/test2")
-async def test_connection():
+async def test_connection2():
     res = requests.get(f"{envs.DATABASE_URL}/test2")
     if res.status_code == 200:
         print("Successfully connected to backend")
