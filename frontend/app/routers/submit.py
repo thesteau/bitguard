@@ -33,7 +33,7 @@ def validate_address(address: str, depth: int):
     confidence = 0.95
 
     try:
-        res = requests.post(f"{BACKEND_URL}/validate", json={"address": address, "depth": depth})
+        res = requests.post(f"{BACKEND_URL}/validate", json={"seed_parameter": address, "depth": depth})
         if res.status_code == 200:
             data = res.json()
             risk_score = data.get("risk_score", risk_score)
@@ -57,19 +57,10 @@ def validate_address_mock(address: str, depth: int):
     # Mock validation logic: 90% chance of being valid
     # ---- MOCK LOGIC ----
 
-    res = requests.get(BACKEND_URL)
-    if res.status_code == 200:
-        print("Successfully connected to backend")
-        print(res.text)
-    else:
-        print(f"Error connecting to backend: {res.status_code}, {res.text}")
-
-    res2 = requests.post(f"{BACKEND_URL}/", json={"test": "data"})
-    if res2.status_code == 200:
-        print("Successfully sent POST request to backend")
-        print(res2.text)
-    else:
-        print(f"Error sending POST request to backend: {res2.status_code}, {res2.text}")
+    try:
+        res = requests.post(f"{BACKEND_URL}/validate", json={"seed_parameter": address, "depth": depth})
+    except:
+        print("Error connecting to backend for validation, using mock values")
 
     mocked_types = [
         "RANSOMWARE",
@@ -77,8 +68,11 @@ def validate_address_mock(address: str, depth: int):
         "OKAY",
     ]
 
+    json_data = res.json()  # Simulate processing the response
+    print(json_data)
+
     predicted_type = random.choice(mocked_types)
-    risk_score = random.randint(0, 100)
+    risk_score = len(json_data)
     confidence = round(random.uniform(0.60, 0.99), 2)
 
     if risk_score >= 80:
