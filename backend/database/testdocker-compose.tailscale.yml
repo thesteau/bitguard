@@ -8,6 +8,7 @@ services:
     environment:
       TS_AUTHKEY: ${TS_AUTHKEY}
       TS_STATE_DIR: /var/lib/tailscale
+      TS_AUTH_ONCE: "true"
       TS_USERSPACE: "false"
     cap_add:
       - NET_ADMIN
@@ -15,7 +16,7 @@ services:
     devices:
       - /dev/net/tun:/dev/net/tun
     volumes:
-      - tailscale-state:/var/lib/tailscale
+      - ./tailscale-state:/var/lib/tailscale
     ports:
       - "8450:8450"
     restart: unless-stopped
