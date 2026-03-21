@@ -39,6 +39,8 @@ class ValidationRequest(BaseModel):
 async def validate_address(payload: ValidationRequest, request: Request):
     model = request.app.state.bitguard_model
 
+    print("Received validation request for:", payload.seed_parameter, "with depth:", payload.depth)
+
     # Data base request code
     bitcoin_data = get_data_from_database(payload.model_dump())
 
