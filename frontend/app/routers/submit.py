@@ -19,11 +19,11 @@ router = APIRouter()
 
 
 class SubmitRequest(BaseModel):
-    address: str = Field(min_length=1)
+    seed_parameter: str = Field(min_length=1)
     depth: int = 0
 
 
-def validate_address(address: str, depth: int):
+def validate_address(seed_parameter: str, depth: int):
     # Placeholder for real validation logic
     # Request send to link
 
@@ -33,7 +33,7 @@ def validate_address(address: str, depth: int):
     confidence = 0.95
 
     try:
-        res = requests.post(f"{BACKEND_URL}/validate", json={"seed_parameter": address, "depth": depth})
+        res = requests.post(f"{BACKEND_URL}/validate", json={"seed_parameter": seed_parameter, "depth": depth})
         if res.status_code == 200:
             data = res.json()
             risk_score = data.get("risk_score", risk_score)
@@ -53,12 +53,16 @@ def validate_address(address: str, depth: int):
     return risk_score, predicted_type, confidence, recommendation
 
 
-def validate_address_mock(address: str, depth: int):
+async def validate_address_mock(seed_parameter: str, depth: int):
     # Mock validation logic: 90% chance of being valid
     # ---- MOCK LOGIC ----
-
+    print(seed_parameter)
+    json_data = {}
     try:
-        res = requests.post(f"{BACKEND_URL}/validate", json={"seed_parameter": address, "depth": depth})
+        res = requests.post(f"{BACKEND_URL}/validate", json={"seed_parameter": seed_parameter, "depth": depth})
+        json_data = res.json()  # Simulate processing the response
+        print("This is the json data", json_data)
+        print(res.text)
     except:
         print("Error connecting to backend for validation, using mock values")
 
@@ -68,11 +72,8 @@ def validate_address_mock(address: str, depth: int):
         "OKAY",
     ]
 
-    json_data = res.json()  # Simulate processing the response
-    print(json_data)
-
     predicted_type = random.choice(mocked_types)
-    risk_score = len(json_data)
+    risk_score = len(json_data) if json_data else 50  # Default if empty
     confidence = round(random.uniform(0.60, 0.99), 2)
 
     if risk_score >= 80:
@@ -80,7 +81,7 @@ def validate_address_mock(address: str, depth: int):
     elif risk_score >= 50:
         recommendation = "CAUTION"
     else:
-        recommendation = "SAFE"
+        recommendation = "SAFE" + f" {risk_score}"
     return risk_score, predicted_type, confidence, recommendation
 
 
@@ -98,22 +99,22 @@ def is_allowed_address(address: str) -> bool:
 
 @router.post("/submit")
 async def submit(req: SubmitRequest):
-    address = req.address.strip().lower()
+    seed_parameter = req.seed_parameter.strip().lower()
     depth = req.depth
 
-    if not address:
-        raise HTTPException(status_code=400, detail="Address is required")
+    if not seed_parameter:
+        raise HTTPException(status_code=400, detail="Seed parameter is required")
 
-    if not (address.startswith("bc1") or address.startswith("1") or address.startswith("3")):
-        raise HTTPException(status_code=400, detail="Address must start with bc1, 1, or 3")
+    if not (seed_parameter.startswith("bc1") or seed_parameter.startswith("1") or seed_parameter.startswith("3")):
+        raise HTTPException(status_code=400, detail="Seed parameter must start with bc1, 1, or 3")
 
-    cache_key = f"btc:{address}:{depth}"
+    cache_key = f"btc:{seed_parameter}:{depth}"
 
     cached = r.get(cache_key)
     if cached:
         return json.loads(cached)
 
-    risk_score, predicted_type, confidence, recommendation = validate_address_mock(address, depth)
+    risk_score, predicted_type, confidence, recommendation = await validate_address_mock(seed_parameter, depth)
 
     result = {
         "risk_score": risk_score,

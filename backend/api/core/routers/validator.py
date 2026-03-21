@@ -31,6 +31,7 @@ class ValidationFeatures(BaseModel):
 
 class ValidationRequest(BaseModel):
     seed_parameter: str
+    depth: int = 0
 
 
 # Model route
