@@ -4,7 +4,7 @@ services:
     container_name: btc-database-api-tailscale
     hostname: ${TS_HOSTNAME:-btc-database-api}
     env_file:
-      - ../.env
+      - .env
     environment:
       TS_AUTHKEY: ${TS_AUTHKEY}
       TS_STATE_DIR: /var/lib/tailscale
@@ -25,7 +25,7 @@ services:
     build: .
     container_name: btc-database-api
     env_file:
-      - ../.env
+      - .env
     depends_on:
       - tailscale
     network_mode: "service:tailscale"
