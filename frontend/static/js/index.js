@@ -108,7 +108,7 @@ form.addEventListener("submit", async (e) => {
     const res = await fetch("/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address, depth }),
+      body: JSON.stringify({ seed_parameter: address, depth }),
     });
 
     const payload = await res.json();
