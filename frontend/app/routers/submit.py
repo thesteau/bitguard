@@ -9,7 +9,7 @@ import redis
 from ..environments import environments as envs
 
 
-r = redis.Redis(host="redis", port=6379, decode_responses=True)
+redis_caching = redis.Redis(host="redis", port=6379, decode_responses=True)
 
 MAX_ADDRESS_LEN = 120
 ALLOWED_DEPTHS = {0, 1, 2, 3}
@@ -24,47 +24,60 @@ class SubmitRequest(BaseModel):
 
 
 def validate_address(seed_parameter: str, depth: int):
-    # Placeholder for real validation logic
-    # Request send to link
-
-    recommendation = "DO_NOT_SEND"
-    risk_score = 85
-    predicted_type = "RANSOMWARE"
-    confidence = 0.95
-
     try:
-        res = requests.post(f"{BACKEND_URL}/validate", json={"seed_parameter": seed_parameter, "depth": depth})
-        if res.status_code == 200:
-            data = res.json()
-            risk_score = data.get("risk_score", risk_score)
-            predicted_type = data.get("predicted_type", predicted_type)
-            confidence = data.get("confidence", confidence)
+        res = requests.post(
+            f"{BACKEND_URL}/validate",
+            json={"seed_parameter": seed_parameter, "depth": depth},
+            timeout=30
+        )
+        res.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Error connecting to validation backend: {str(e)}"
+        ) from e
 
-            if risk_score >= 80:
-                recommendation = "DO_NOT_SEND"
-            elif risk_score >= 50:
-                recommendation = "CAUTION"
-            else:
-                recommendation = "SAFE"
-    except:
-        # In case of any error, return the default mocked values
-        pass
+    if res.status_code != 200:
+        raise HTTPException(status_code=res.status_code,
+                            detail=f"Backend validation error: {res.status_code}, {res.text}"
+                            )
+
+    data = res.json()
+    risk_score = data["risk_score"]
+    predicted_type = data["predicted_type"]
+    confidence = data["confidence"]
+
+    if risk_score >= 80:
+        recommendation = "DO_NOT_SEND"
+    elif risk_score >= 50:
+        recommendation = "CAUTION"
+    else:
+        recommendation = "SAFE"
 
     return risk_score, predicted_type, confidence, recommendation
 
 
 async def validate_address_mock(seed_parameter: str, depth: int):
-    # Mock validation logic: 90% chance of being valid
     # ---- MOCK LOGIC ----
-    print(seed_parameter)
-    json_data = {}
     try:
-        res = requests.post(f"{BACKEND_URL}/validate", json={"seed_parameter": seed_parameter, "depth": depth})
-        json_data = res.json()  # Simulate processing the response
-        print("This is the json data", json_data)
-        print(res.text)
-    except:
-        print("Error connecting to backend for validation, using mock values")
+        res = requests.post(
+            f"{BACKEND_URL}/validate",
+            json={"seed_parameter": seed_parameter, "depth": depth},
+            timeout=30
+        )
+        res.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Error connecting to validation backend: {str(e)}"
+        ) from e
+
+    if res.status_code != 200:
+        raise HTTPException(status_code=res.status_code,
+                            detail=f"Backend validation error: {res.status_code}, {res.text}"
+                            )
+
+    json_data = res.json()
 
     mocked_types = [
         "RANSOMWARE",
@@ -73,7 +86,7 @@ async def validate_address_mock(seed_parameter: str, depth: int):
     ]
 
     predicted_type = random.choice(mocked_types)
-    risk_score = len(json_data) if json_data else 50  # Default if empty
+    risk_score = len(json_data) if json_data else 50
     confidence = round(random.uniform(0.60, 0.99), 2)
 
     if risk_score >= 80:
@@ -85,8 +98,8 @@ async def validate_address_mock(seed_parameter: str, depth: int):
     return risk_score, predicted_type, confidence, recommendation
 
 
-def is_allowed_address(address: str) -> bool:
-    a = address.strip().lower()
+def is_allowed_address(address: str):
+    a = address.strip()
 
     if not a:
         return False
@@ -99,7 +112,7 @@ def is_allowed_address(address: str) -> bool:
 
 @router.post("/submit")
 async def submit(req: SubmitRequest):
-    seed_parameter = req.seed_parameter.strip().lower()
+    seed_parameter = req.seed_parameter.strip()
     depth = req.depth
 
     if not seed_parameter:
@@ -110,7 +123,7 @@ async def submit(req: SubmitRequest):
 
     cache_key = f"btc:{seed_parameter}:{depth}"
 
-    cached = r.get(cache_key)
+    cached = redis_caching.get(cache_key)
     if cached:
         return json.loads(cached)
 
@@ -123,6 +136,6 @@ async def submit(req: SubmitRequest):
         "recommendation": recommendation
     }
 
-    r.setex(cache_key, 259200, json.dumps(result))
+    redis_caching.setex(cache_key, 259200, json.dumps(result))
 
     return result
