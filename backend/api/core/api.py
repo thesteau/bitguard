@@ -10,7 +10,6 @@ app.state.bitguard_model = lgb_model
 app.state.bitguard_scaler = scale_loader
 
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
