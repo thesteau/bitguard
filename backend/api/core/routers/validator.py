@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 from ..helpers.database import get_data_from_database
-
-
+from pipeline_code.bitcoin_fraud_pipeline import build_features
 router = APIRouter()
 
 
@@ -34,20 +33,22 @@ class ValidationRequest(BaseModel):
     depth: int = 0
 
 
-# Model route
 @router.post("/validate")
 async def validate_address(payload: ValidationRequest, request: Request):
     model = request.app.state.bitguard_model
+    scaler = request.app.state.bitguard_scaler
 
-    # Data base request code
+ 
     bitcoin_data = get_data_from_database(payload.model_dump())
 
-    # Data transformation Code - Pipeline Code
-    transformed_df = bitcoin_data.to_json(orient="records")  # PLACE HOLDER
-    # data_transform
+    
+    
 
-    # Model Code
-    # result =model.predict_from_features(transformed_df)
+    transformed_df = build_features(bitcoin_data)
+    X_scaled = scaler.transform(transformed_df)
 
-    result = transformed_df  # PLACE HOLDER
-    return result
+
+    result = int(((1 - model.predict_proba(X_scaled)[:, 1]) * 100).round().astype(int)[0])
+    return {"score": result}
+
+    
