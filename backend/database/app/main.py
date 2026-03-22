@@ -20,18 +20,6 @@ driver = GraphDatabase.driver(
 query = Path("queries/base_query.cypher").read_text(encoding="utf-8")
 
 
-@app.get("/test")
-async def test_connection():
-    return {"message": "Connection to database successful!"}
-
-
-@app.post("/test")  # Path echo
-async def test_query_database(request: Request):
-    parameter = await request.json()
-
-    return parameter
-
-
 @app.post("/query")
 async def query_database(request: Request):
     parameter = await request.json()
