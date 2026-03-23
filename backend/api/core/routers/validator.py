@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
-from core.helpers.transact_database import get_data_from_database
+from core.helpers.database import get_data_from_database
 from core.helpers.model_prediction import predict_score
 from pipeline_code.bitcoin_fraud_pipeline import build_features
 
