@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 
-from ..environments import environments as envs
+from app.environments import environments as envs
 
 
 def get_data_from_database(payload):

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from model.loader import lgb_model, scale_loader
-from core.routers import include_routers
+from app.routers import include_routers
 
 
 app = FastAPI()

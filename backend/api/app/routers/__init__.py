@@ -1,4 +1,4 @@
-from .validator import router as validator_router
+from app.routers.validator import router as validator_router
 
 
 def include_routers(app):
