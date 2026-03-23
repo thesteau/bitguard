@@ -15,4 +15,4 @@ ENV PYTHONPATH=/app
 
 EXPOSE 8444
 
-CMD ["python", "-m", "uvicorn", "core.api:app", "--host", "0.0.0.0", "--port", "8444"]
+CMD ["python", "-m", "uvicorn", "app.api:app", "--host", "0.0.0.0", "--port", "8444"]
