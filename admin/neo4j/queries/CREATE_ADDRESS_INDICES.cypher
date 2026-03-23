@@ -1,0 +1,1 @@
+CREATE INDEX script_address_index FOR (s:Script) ON (s.Address)
