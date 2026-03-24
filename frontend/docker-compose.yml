@@ -4,9 +4,13 @@ services:
     container_name: btc-app
     restart: unless-stopped
     ports:
-      - "80:8000"
+      - "8000:8000"
     env_file:
       - .env
+    volumes:
+      - ./app:/app/app
+      - ./static:/app/static
+      - ./templates:/app/templates
     depends_on:
       - redis
 
