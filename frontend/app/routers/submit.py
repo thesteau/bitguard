@@ -1,5 +1,6 @@
 import random
 import json
+import logging
 
 from pydantic import BaseModel, Field
 from fastapi import APIRouter, HTTPException
@@ -8,14 +9,14 @@ import redis
 
 from ..environments import environments as envs
 
+router = APIRouter()
 
 redis_caching = redis.Redis(host="redis", port=6379, decode_responses=True)
+logger = logging.getLogger(__name__)
 
 MAX_ADDRESS_LEN = 120
 ALLOWED_DEPTHS = {0, 1, 2, 3}
 BACKEND_URL = envs.BACKEND_URL
-
-router = APIRouter()
 
 
 class SubmitRequest(BaseModel):
@@ -32,15 +33,16 @@ def validate_address(seed_parameter: str, depth: int):
         )
         res.raise_for_status()
     except requests.exceptions.RequestException as e:
+        if res.status_code >= 500:
+            logger.error("ERROR: Backend error: %s - %s", res.status_code, res.text)
+            raise HTTPException(status_code=502,
+                                detail=f"Backend error: {res.status_code}, try again later or contact us."
+                                ) from e
+
         raise HTTPException(
             status_code=502,
             detail=f"Error connecting to validation backend: {str(e)}"
         ) from e
-
-    if res.status_code != 200:
-        raise HTTPException(status_code=res.status_code,
-                            detail=f"Backend validation error: {res.status_code}, {res.text}"
-                            )
 
     data = res.json()
     risk_score = data["risk_score"]
@@ -67,15 +69,16 @@ async def validate_address_mock(seed_parameter: str, depth: int):
         )
         res.raise_for_status()
     except requests.exceptions.RequestException as e:
+        if res.status_code >= 500:
+            logger.error("ERROR: Backend error: %s - %s", res.status_code, res.text)
+            raise HTTPException(status_code=502,
+                                detail=f"Backend error: {res.status_code}, try again later or contact us."
+                                ) from e
+
         raise HTTPException(
             status_code=502,
             detail=f"Error connecting to validation backend: {str(e)}"
         ) from e
-
-    if res.status_code != 200:
-        raise HTTPException(status_code=res.status_code,
-                            detail=f"Backend validation error: {res.status_code}, {res.text}"
-                            )
 
     json_data = res.json()
 
