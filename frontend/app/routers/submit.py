@@ -38,8 +38,12 @@ def validate_address(seed_parameter: str, depth: int):
         ) from e
 
     if res.status_code != 200:
+        if res.status_code > 500:
+            raise HTTPException(status_code=502,
+                                detail=f"Backend error: {res.status_code}, try again later or contact us."
+                                )
         raise HTTPException(status_code=res.status_code,
-                            detail=f"Backend validation error: {res.status_code}, {res.text}"
+                            detail=f"Backend error: {res.status_code}, {res.text}"
                             )
 
     data = res.json()
