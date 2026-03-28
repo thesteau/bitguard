@@ -1,0 +1,114 @@
+.page-shell {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.card {
+  margin-top: 28px;
+  background: #151b24;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px;
+}
+
+.guide-hero {
+  margin-top: 20px;
+}
+
+.guide-eyebrow {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.guide-hero h1 {
+  margin: 0;
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.guide-subtitle {
+  margin-top: 18px;
+  max-width: 760px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.section-header {
+  margin-bottom: 22px;
+}
+
+.section-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.section-header p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.guide-steps {
+  margin: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.guide-steps li {
+  color: rgba(255, 255, 255, 0.88);
+  padding-left: 8px;
+  line-height: 1.7;
+}
+
+.guide-steps li::marker {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.guide-steps strong {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 17px;
+}
+
+.guide-steps span {
+  display: block;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.guide-help a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.guide-help a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 22px;
+  }
+
+  .guide-subtitle {
+    font-size: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 24px;
+  }
+}

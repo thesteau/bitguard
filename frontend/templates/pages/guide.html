@@ -2,17 +2,55 @@
 
 {% block title %}How To Use BitGuard{% endblock %}
 
+{% block link %}
+<link rel="stylesheet" href="/static/css/guide.css?v=1">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
+<div class="container page-shell mt-4">
+  <section class="card guide-hero">
+    <p class="guide-eyebrow">Getting Started</p>
     <h1>How To Use BitGuard</h1>
-    <p>Using BitGuard is simple and straightforward. Follow these steps to get started:</p>
+    <p class="guide-subtitle">
+      BitGuard helps you quickly assess the risk of a Bitcoin wallet address using
+      graph-based analysis and structured risk signals.
+    </p>
+  </section>
 
-    <ol>
-        <li><strong>Enter a Bitcoin Address:</strong> On the homepage, you'll find a search bar. Input any Bitcoin address you want to assess.</li>
-        <li><strong>Select Depth:</strong> Choose the depth of analysis (0-3) to determine how many layers of transaction history to evaluate.</li>
-        <li><strong>Submit for Assessment:</strong> Click the search button to submit the address for risk assessment.</li>
-        <li><strong>View Results:</strong> After processing, you'll receive a risk score, predicted type, confidence level, and recommendations based on the analysis.</li>
+  <section class="card guide-content">
+    <div class="section-header">
+      <h2>How it works</h2>
+      <p>Follow these steps to run your first wallet assessment.</p>
+    </div>
+
+    <ol class="guide-steps">
+      <li>
+        <strong>Enter a Bitcoin Address</strong>
+        <span>On the homepage, use the search bar to enter the Bitcoin address you want to assess.</span>
+      </li>
+      <li>
+        <strong>Select Depth</strong>
+        <span>Choose a depth from 0 to 3 to control how many layers of connected transaction activity are analyzed.</span>
+      </li>
+      <li>
+        <strong>Submit for Assessment</strong>
+        <span>Click the Analyze button to send the address for risk evaluation.</span>
+      </li>
+      <li>
+        <strong>View Results</strong>
+        <span>Review the risk score, confidence level, and recommendation returned by the model.</span>
+      </li>
     </ol>
+  </section>
 
-    <p>If you have any questions or need further assistance, please don't hesitate to contact us through our <a href="/contact">Contact Us</a> page.</p>
+  <section class="card guide-help">
+    <div class="section-header">
+      <h2>Need help?</h2>
+      <p>
+        If you have questions or need support, visit our
+        <a href="/contact">Contact Us</a> page.
+      </p>
+    </div>
+  </section>
+</div>
 {% endblock %}

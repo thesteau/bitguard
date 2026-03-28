@@ -3,29 +3,45 @@
 {% block title %}AI-Powered Risk Assessment{% endblock %}
 
 {% block link %}
-<link rel="stylesheet" href="/static/css/index.css">
+<link rel="stylesheet" href="/static/css/index.css?v=6">
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h1>
-    <span class="bit">Bit</span><span class="guard">Guard</span>
-  </h1>
+<div class="container page-shell mt-4">
 
-  <div>
-    <p>On-chain risk intelligence </p>
-    <p>for Bitcoin wallets</p>
-    <p>Graph-native behavioral scoring. 0–100. Structured signals.</p>
-    <p>Built for compliance teams, DeFi protocols, and hobbyists.</p>
-  </div>
+  <section class="hero-card">
+    <div class="hero-content">
+      <p class="eyebrow">Bitcoin Wallet Risk Assessment</p>
 
-  <div id="formAlert"></div>
+      <h1 class="hero-title">
+        Check a wallet before you send.
+      </h1>
 
-  <div class="search card">
-    <div class="search">
-      <form id="searchForm" class="searchForm">
+      <p class="hero-subtitle">
+        BitGuard helps you assess Bitcoin wallet risk with a simple score,
+        confidence level, and recommendation so you can make safer transaction decisions.
+      </p>
+    </div>
+  </section>
 
-        <input id="addressInput" name="address" placeholder="Enter a bitcoin address..." />
+  <div id="formAlert" class="form-alert"></div>
+
+  <section class="search-card">
+    <div class="section-header">
+      <h2>Run an assessment</h2>
+      <p>Enter a Bitcoin address and choose how much connected activity to analyze.</p>
+    </div>
+
+    <form id="searchForm" class="searchForm">
+      <label for="addressInput" class="input-label">Bitcoin Address</label>
+
+      <div class="search-bar">
+        <input
+          id="addressInput"
+          name="address"
+          placeholder="Enter a bitcoin address..."
+          autocomplete="off"
+        />
 
         <select id="depthSelect" name="depth" class="depth-select">
           <option value="0" selected>Depth 0</option>
@@ -34,37 +50,51 @@
           <option value="3">Depth 3</option>
         </select>
 
-        <button id="searchBtn" type="submit">🔍</button>
+        <button id="searchBtn" type="submit" class="search-button">
+          <span class="search-icon">🔍</span>
+          <span>Analyze</span>
+        </button>
+      </div>
+    </form>
+  </section>
 
-      </form>
+  <section class="results-grid">
+    <div class="result-card">
+      <div class="section-header">
+        <h3>Wallet</h3>
+        <p>The address currently being reviewed.</p>
+      </div>
+      <div class="code address-preview" id="addressPreview">No address entered yet...</div>
     </div>
-  </div>
 
-  <div class="card">
-    <h3>Input Address</h3>
-    <div class="code" id="addressPreview">No address entered yet...</div>
-  </div>
-
-  <div class="card">
-    <h3>Assessment</h3>
-    <div class="stats">
-      <div class="stat">
-        <label>Risk Score</label>
-        <strong id="riskScore">None</strong>
+    <div class="result-card">
+      <div class="section-header">
+        <h3>Results</h3>
+        <p>Review the score, model confidence, and suggested action.</p>
       </div>
 
-      <div class="stat">
-        <label>Confidence</label>
-        <strong id="confidence">?.??</strong>
-      </div>
+      <div class="stats">
+        <div class="stat">
+          <label>Risk Score</label>
+          <strong id="riskScore">None</strong>
+          <span class="stat-note">Lower scores suggest lower observed risk.</span>
+        </div>
 
-      <div class="stat">
-        <label>Recommendation</label>
-        <strong id="recommendation" class="danger">Unknown</strong>
-        <!-- danger, warn, success -->
+        <div class="stat">
+          <label>Confidence</label>
+          <strong id="confidence">?.??</strong>
+          <span class="stat-note">How certain the model is about this result.</span>
+        </div>
+
+        <div class="stat">
+          <label>Recommendation</label>
+          <strong id="recommendation" class="danger">Unknown</strong>
+          <span class="stat-note">A simple action-oriented summary of the assessment.</span>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
+
 </div>
 {% endblock %}
 
