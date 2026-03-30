@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 class ValidationRequest(BaseModel):
     seed_parameter: str
-    depth: int = 0
 
 
 @router.post("/validate")
@@ -22,8 +21,7 @@ async def validate_address(payload: ValidationRequest, request: Request):
     model = request.app.state.bitguard_model
     scaler = request.app.state.bitguard_scaler
 
-    logger.info("INFO: Received validation request for seed_parameter: %s, depth: %s",
-                payload.seed_parameter, payload.depth)
+    logger.info("INFO: Received validation request for seed_parameter: %s", payload.seed_parameter)
 
     try:
         bitcoin_data = get_data_from_database(payload.model_dump())

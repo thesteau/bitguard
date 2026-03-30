@@ -4,10 +4,8 @@ const form = document.getElementById("searchForm");
 const input = document.getElementById("addressInput");
 const preview = document.getElementById("addressPreview");
 const btn = document.getElementById("searchBtn");
-const depthSelect = document.getElementById("depthSelect");
 
 const riskScoreEl = document.getElementById("riskScore");
-// const predictedTypeEl = document.getElementById("predictedType");
 const confidenceEl = document.getElementById("confidence");
 const recommendationEl = document.getElementById("recommendation");
 
@@ -17,8 +15,7 @@ function updatePreview() {
 }
 
 function setEmpty() {
-  riskScoreEl.textContent = "None";
-  // predictedTypeEl.textContent = "None";
+  riskScoreEl.textContent = "None"
   confidenceEl.textContent = "?.??";
   recommendationEl.textContent = "Unknown";
   recommendationEl.className = "danger";
@@ -29,7 +26,6 @@ function setLoading() {
   btn.textContent = "…";
 
   riskScoreEl.textContent = "…";
-  // predictedTypeEl.textContent = "…";
   confidenceEl.textContent = "…";
   recommendationEl.textContent = "Checking…";
   recommendationEl.className = "warn";
@@ -42,7 +38,6 @@ function clearLoading() {
 
 function setResult(data) {
   riskScoreEl.textContent = data.risk_score ?? "None";
-  // predictedTypeEl.textContent = data.predicted_type ?? "None";
 
   confidenceEl.textContent =
     data.confidence !== undefined && data.confidence !== null
@@ -86,7 +81,6 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const address = input.value.trim();
-  const depth = Number(depthSelect?.value ?? 0);
 
   updatePreview();
 
@@ -108,7 +102,7 @@ form.addEventListener("submit", async (e) => {
     const res = await fetch("/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ seed_parameter: address, depth }),
+      body: JSON.stringify({ seed_parameter: address }),
     });
 
     const payload = await res.json();
