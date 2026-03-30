@@ -22,6 +22,7 @@ services:
     restart: unless-stopped
 
   database-api:
+    # Replace build with image for production
     build: .
     container_name: btc-database-api
     env_file:
