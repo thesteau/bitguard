@@ -2,10 +2,36 @@
 
 {% block title %}Contact Us{% endblock %}
 
+{% block link %}
+<link rel="stylesheet" href="/static/css/contact.css?v=1">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
+<div class="container page-shell mt-4">
+  <section class="card contact-hero">
+    <p class="contact-eyebrow">Get in Touch</p>
     <h1>Contact Us</h1>
-    <p>If you have any questions or inquiries, please feel free to reach out to us:</p>
-    Submit this google form: <a href="" target="_blank">Contact Form</a>
+    <p class="contact-subtitle">
+      Have a question, suggestion, or issue with BitGuard? Send us a note through our contact form and we’ll get back to you.
+    </p>
+  </section>
+
+  <section class="card contact-content">
+    <div class="section-header">
+      <h2>Reach out to the team</h2>
+      <p>
+        The best way to contact us is through our Google Form. Use the button below to open it in a new tab.
+      </p>
+    </div>
+
+    <a
+      class="contact-button"
+      href="https://docs.google.com/forms/d/e/1FAIpQLSfHlt8j-ka7sPi_n2a3i0_CNJ2sjTDMq80zcqlJg6K0b5zSug/viewform?usp=publish-editor"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Open Contact Form
+    </a>
+  </section>
 </div>
 {% endblock %}

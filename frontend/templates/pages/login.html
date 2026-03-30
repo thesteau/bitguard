@@ -2,9 +2,102 @@
 
 {% block title %}Signup/Login{% endblock %}
 
+{% block link %}
+<link rel="stylesheet" href="/static/css/login.css?v=1">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-    login or signup
+<div class="container page-shell mt-4">
+  <section class="card login-hero">
+    <p class="login-eyebrow">Account Access</p>
+    <h1>Sign Up / Login</h1>
+    <p class="login-subtitle">
+      Account features are currently in development. This page previews the future
+      BitGuard access experience for dashboards, saved assessments, and team tools.
+    </p>
+  </section>
+
+  <section class="login-grid">
+    <div class="card login-card">
+      <div class="section-header">
+        <h2>Sign In</h2>
+        <p>Access your BitGuard workspace once account support is available.</p>
+      </div>
+
+      <form class="login-form" action="#" method="post">
+        <div class="input-group">
+          <label for="loginEmail" class="input-label">Email</label>
+          <input id="loginEmail" type="email" placeholder="you@example.com" disabled>
+        </div>
+
+        <div class="input-group">
+          <label for="loginPassword" class="input-label">Password</label>
+          <input id="loginPassword" type="password" placeholder="Enter your password" disabled>
+        </div>
+
+        <button type="button" class="auth-button" disabled>Sign In</button>
+      </form>
+
+      <p class="coming-soon-note">Authentication is not enabled yet.</p>
+    </div>
+
+    <div class="card login-card">
+      <div class="section-header">
+        <h2>Create an Account</h2>
+        <p>Register for future access to saved results and enhanced features.</p>
+      </div>
+
+      <form class="login-form" action="#" method="post">
+        <div class="input-group">
+          <label for="signupName" class="input-label">Full Name</label>
+          <input id="signupName" type="text" placeholder="Your name" disabled>
+        </div>
+
+        <div class="input-group">
+          <label for="signupEmail" class="input-label">Email</label>
+          <input id="signupEmail" type="email" placeholder="you@example.com" disabled>
+        </div>
+
+        <div class="input-group">
+          <label for="signupPassword" class="input-label">Password</label>
+          <input id="signupPassword" type="password" placeholder="Create a password" disabled>
+        </div>
+
+        <button type="button" class="auth-button secondary" disabled>Create Account</button>
+      </form>
+
+      <p class="coming-soon-note">Signup functionality is coming soon.</p>
+    </div>
+  </section>
+
+  <section class="card account-features">
+    <div class="section-header">
+      <h2>Planned account features</h2>
+      <p>Here’s what account access is expected to support in future versions of BitGuard.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <h3>Saved Assessments</h3>
+        <p>Store wallet lookups and revisit prior results without rerunning every query.</p>
+      </div>
+
+      <div class="feature-item">
+        <h3>Risk Monitoring</h3>
+        <p>Track wallets over time and review updated scoring as new on-chain activity appears.</p>
+      </div>
+
+      <div class="feature-item">
+        <h3>Team Access</h3>
+        <p>Support multiple users, shared workflows, and compliance-oriented collaboration.</p>
+      </div>
+
+      <div class="feature-item">
+        <h3>Usage History</h3>
+        <p>Review recent searches, model responses, and supporting signals in one place.</p>
+      </div>
+    </div>
+  </section>
 </div>
 {% endblock %}
 

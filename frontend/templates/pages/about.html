@@ -2,9 +2,91 @@
 
 {% block title %}About{% endblock %}
 
+{% block link %}
+<link rel="stylesheet" href="/static/css/about.css?v=1">
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-  <h1>About Us</h1>
-  <p>Welcome</p>
+<div class="container page-shell mt-4">
+  <section class="card about-hero">
+    <p class="about-eyebrow">About BitGuard</p>
+    <h1>Building safer Bitcoin transactions</h1>
+    <p class="about-subtitle">
+      BitGuard is a graduate capstone project focused on making Bitcoin wallet risk
+      assessment more accessible, understandable, and actionable for everyday users
+      and organizations alike.
+    </p>
+  </section>
+
+  <section class="card about-content">
+    <div class="about-block">
+      <h2>Who we are</h2>
+      <p>
+        We are graduate students developing BitGuard as part of our capstone project.
+        Our work is centered on applying data science, graph analysis, and machine
+        learning to a real-world problem in cryptocurrency safety: helping people make
+        better decisions before sending funds to a Bitcoin wallet.
+      </p>
+    </div>
+
+    <div class="about-block">
+      <h2>Why we built BitGuard</h2>
+      <p>
+        Cryptocurrency fraud continues to create major financial harm, and Bitcoin
+        transactions are generally irreversible once they are sent. Recovery is often
+        difficult or impossible. At the same time, many malicious wallets can operate
+        for long periods before they are clearly identified, which means users may send
+        funds without realizing the risk.
+      </p>
+      <p>
+        Existing approaches often depend on static blacklists of already-known bad
+        wallets. That creates an obvious limitation: a blacklist can only flag wallets
+        that have already been caught. Many current tools are also either expensive,
+        enterprise-focused, or too manual for ordinary users to rely on in the moment
+        they need to make a transaction decision.
+      </p>
+    </div>
+
+    <div class="about-block">
+      <h2>Our goal</h2>
+      <p>
+        The goal of BitGuard is to provide a more accessible way to assess Bitcoin wallet
+        risk using graph-based behavioral analysis and structured signals. Instead of only
+        relying on whether a wallet appears on a blacklist, BitGuard is intended to help
+        users evaluate whether a wallet shows patterns that may be associated with risky
+        or malicious behavior.
+      </p>
+      <p>
+        In other words, we want to make wallet safety checks faster, clearer, and easier
+        to use before a transaction happens, not after funds are already gone.
+      </p>
+    </div>
+
+    <div class="about-block">
+      <h2>Who BitGuard is for</h2>
+      <p>
+        BitGuard is designed for a few different audiences. One important audience is
+        everyday or less technical users who may not regularly work with Bitcoin, but
+        still want a quick way to check whether a wallet looks safe before sending money.
+        This includes people copying wallet addresses from websites, messages, or other
+        unfamiliar sources.
+      </p>
+      <p>
+        It is also intended for organizations such as wallets, exchanges, compliance
+        teams, and other platforms that may benefit from a lightweight risk-scoring tool
+        without needing to adopt a full enterprise blockchain forensics suite.
+      </p>
+    </div>
+
+    <div class="about-block">
+      <h2>What BitGuard aims to change</h2>
+      <p>
+        There is currently no simple, easy-to-use tool for the average user to understand
+        who or what they are actually sending Bitcoin to. BitGuard is our attempt to close
+        that gap by turning complex blockchain risk signals into something more practical,
+        interpretable, and useful at the point of transaction.
+      </p>
+    </div>
+  </section>
 </div>
 {% endblock %}
