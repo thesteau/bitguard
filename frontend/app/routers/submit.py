@@ -41,7 +41,7 @@ async def validate_address(seed_parameter: str):
 
         raise HTTPException(
             status_code=502,
-            detail="Error connecting to validation"
+            detail="Error validating request, try again later or contact us."
         ) from e
 
     json_data = res.json()
