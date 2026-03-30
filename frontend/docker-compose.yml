@@ -1,5 +1,6 @@
 services:
   btc-app:
+    # Replace build with image for production
     build: .
     container_name: btc-app
     restart: unless-stopped

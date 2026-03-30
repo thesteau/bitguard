@@ -1,5 +1,6 @@
 services:
   api:
+    # Replace build with image for production
     build: .
     container_name: btc-api
     ports:
@@ -7,7 +8,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./model:/app/model:ro
+      - ./pickle:/app/pickle:ro
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
