@@ -22,7 +22,7 @@ class SubmitRequest(BaseModel):
     seed_parameter: str = Field(min_length=1)
 
 
-def validate_address(seed_parameter: str):
+async def validate_address(seed_parameter: str):
     try:
         res = requests.post(
             f"{BACKEND_URL}/validate",
@@ -41,67 +41,28 @@ def validate_address(seed_parameter: str):
 
         raise HTTPException(
             status_code=502,
-            detail=f"Error connecting to validation backend: {str(e)}"
+            detail="Error connecting to validation"
         ) from e
 
-    data = res.json()
-    risk_score = data["risk_score"]
-    predicted_type = data["predicted_type"]
-    confidence = data["confidence"]
+    json_data = res.json()
+
+    mocked_types = [
+        "RANSOMWARE",
+        "UNKNOWN",
+        "OKAY",
+    ]
+
+    predicted_type = random.choice(mocked_types)
+    risk_score = len(json_data) if json_data else 50
+    confidence = round(random.uniform(0.60, 0.99), 2)
 
     if risk_score >= 80:
         recommendation = "DO_NOT_SEND"
     elif risk_score >= 50:
         recommendation = "CAUTION"
     else:
-        recommendation = "SAFE"
-
+        recommendation = "SAFE" + f" {risk_score}"
     return risk_score, predicted_type, confidence, recommendation
-
-
-# DEPRECATED
-# async def validate_address_mock(seed_parameter: str):
-#     # ---- MOCK LOGIC ----
-#     try:
-#         res = requests.post(
-#             f"{BACKEND_URL}/validate",
-#             json={"seed_parameter": seed_parameter},
-#             timeout=30
-#         )
-#         res.raise_for_status()
-#     except requests.exceptions.RequestException as e:
-#         logger.error("ERROR: Error connecting to validation backend: %s", str(e))
-
-#         if res.status_code >= 500:
-#             logger.error("ERROR: Backend error: %s - %s", res.status_code, res.text)
-#             raise HTTPException(status_code=502,
-#                                 detail=f"Backend error: {res.status_code}, try again later or contact us."
-#                                 ) from e
-
-#         raise HTTPException(
-#             status_code=502,
-#             detail="Error connecting to validation"
-#         ) from e
-
-#     json_data = res.json()
-
-#     mocked_types = [
-#         "RANSOMWARE",
-#         "UNKNOWN",
-#         "OKAY",
-#     ]
-
-#     predicted_type = random.choice(mocked_types)
-#     risk_score = len(json_data) if json_data else 50
-#     confidence = round(random.uniform(0.60, 0.99), 2)
-
-#     if risk_score >= 80:
-#         recommendation = "DO_NOT_SEND"
-#     elif risk_score >= 50:
-#         recommendation = "CAUTION"
-#     else:
-#         recommendation = "SAFE" + f" {risk_score}"
-#     return risk_score, predicted_type, confidence, recommendation
 
 
 def is_allowed_address(address: str):
