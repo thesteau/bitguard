@@ -1,0 +1,13 @@
+services:
+  api:
+    image: ghcr.io/thesteau/btc-backend-api:latest
+    container_name: btc-api
+    ports:
+      - "8444:8444"
+    env_file:
+      - .env
+    volumes:
+      - ./pickle:/app/pickle:ro
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
