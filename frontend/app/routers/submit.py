@@ -46,6 +46,13 @@ async def validate_address(seed_parameter: str):
 
     json_data = res.json()
 
+
+    ##
+    ## ADD REAL CHANGES HERE
+
+
+    ##
+
     mocked_types = [
         "RANSOMWARE",
         "UNKNOWN",
@@ -61,7 +68,7 @@ async def validate_address(seed_parameter: str):
     elif risk_score >= 50:
         recommendation = "CAUTION"
     else:
-        recommendation = "SAFE" + f" {risk_score}"
+        recommendation = "SAFE"
     return risk_score, predicted_type, confidence, recommendation
 
 
