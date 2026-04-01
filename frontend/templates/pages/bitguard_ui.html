@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BitGuard.pro — Bitcoin Wallet Risk Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0c0c0d;
+    --surface:  #131315;
+    --border:   #1f1f23;
+    --border-2: #2b2b31;
+    --text:     #e2e2e8;
+    --muted:    #52525e;
+    --accent:   #f5a623;
+    --risk-vh:  #ff3b30;
+    --risk-h:   #ff6b35;
+    --risk-m:   #f5a623;
+    --risk-l:   #30d158;
+    --risk-vl:  #32ade6;
+    --mono:     'IBM Plex Mono', monospace;
+    --sans:     'IBM Plex Sans', sans-serif;
+    --radius:   6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 40px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 48px;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .logo-dot { color: var(--accent); }
+  .logo-ext { color: var(--muted); }
+
+  /* ── Search ── */
+  .search-wrap { margin-bottom: 40px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .search-row {
+    display: flex;
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .chain-tag {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 14px;
+    border-right: 1px solid var(--border-2);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .addr-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 13px 16px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .addr-input::placeholder { color: var(--muted); }
+  .analyse-btn {
+    padding: 0 22px;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: #0c0c0d;
+    letter-spacing: 0.01em;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .analyse-btn:hover { opacity: 0.88; }
+  .sub-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 7px;
+  }
+  .privacy {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  /* ── Results ── */
+  .results { display: none; }
+  .results.visible { display: block; }
+
+  /* ── Risk header ── */
+  .risk-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    gap: 16px;
+  }
+  .risk-left {}
+  .risk-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .risk-bucket {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .risk-addr {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    word-break: break-all;
+  }
+  .risk-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .mempool-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+    text-decoration: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .mempool-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border-2);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: var(--text); color: var(--text); }
+
+  /* risk colors */
+  .risk-very_high { color: var(--risk-vh); }
+  .risk-high      { color: var(--risk-h);  }
+  .risk-medium    { color: var(--risk-m);  }
+  .risk-low       { color: var(--risk-l);  }
+  .risk-very_low  { color: var(--risk-vl); }
+
+  /* ── Stats row ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .stat-cell {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-cell:nth-child(odd)  { border-right: 1px solid var(--border); }
+  .stat-cell:nth-child(even) { border-right: none; }
+  .stat-cell:nth-last-child(-n+2) { border-bottom: none; }  .stat-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .stat-val {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ── Findings ── */
+  .findings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .findings-count {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .findings-count.flagged { color: var(--risk-vh); }
+
+  .finding {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .finding-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+    transition: background 0.12s;
+  }
+  .finding-summary:hover { background: var(--border); }
+
+  .finding-indicator {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .finding-main { flex: 1; min-width: 0; }
+  .finding-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 1px;
+  }
+  .finding-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .finding-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .influence-bar-wrap {
+    width: 60px;
+    height: 2px;
+    background: var(--border-2);
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .influence-bar { height: 100%; border-radius: 1px; }
+  .influence-pct {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 28px;
+    text-align: right;
+  }
+  .direction-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 3px;
+  }
+  .tag-risk    { background: rgba(255,59,48,0.12); color: var(--risk-vh); }
+  .tag-safe    { background: rgba(50,173,230,0.12); color: var(--risk-vl); }
+  .chevron {
+    font-size: 10px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .finding.open .chevron { transform: rotate(90deg); }
+
+  /* Dropdown */
+  .finding-detail {
+    display: none;
+    padding: 14px 16px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .finding.open .finding-detail { display: block; }
+  .detail-what {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    line-height: 1.55;
+  }
+  .detail-why {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .detail-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3px;
+    margin-top: 10px;
+  }
+  .detail-label:first-child { margin-top: 0; }
+
+  /* ── Footer ── */
+  .page-footer {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Loading ── */
+  .loading { display: none; text-align: center; padding: 48px 0; }
+  .loading.visible { display: block; }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border-2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    margin: 0 auto 12px;
+  }
+  .loading-txt { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 560px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .risk-header { flex-direction: column; }
+    .risk-right { flex-direction: row; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">BitGuard<span class="logo-dot">.</span><span class="logo-ext">pro</span></div>
+</div>
+
+<!-- Search -->
+<div class="search-wrap">
+  <div class="eyebrow">// Analyse Address</div>
+  <div class="search-row">
+    <div class="chain-tag"><div class="dot"></div>BTC</div>
+    <input class="addr-input" id="addressInput" placeholder="Enter a Bitcoin address..." autocomplete="off" />
+    <button class="analyse-btn" onclick="runAnalysis()">Analyse</button>
+  </div>
+  <div class="sub-row">
+    <span class="privacy">Searches are never stored</span>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading" id="loadingState">
+  <div class="spinner"></div>
+  <div class="loading-txt">Analysing wallet...</div>
+</div>
+
+<!-- Results -->
+<div class="results" id="results">
+
+  <div class="divider"></div>
+
+  <!-- Risk header -->
+  <div class="risk-header">
+    <div class="risk-left">
+      <div class="risk-eyebrow">// Risk Analysis</div>
+      <div class="risk-bucket" id="riskBucket">—</div>
+      <div class="risk-addr" id="riskAddr"></div>
+    </div>
+    <div class="risk-right">
+      <button class="copy-btn" onclick="copyAddress()">Copy address</button>
+      <a class="mempool-btn" id="mempoolLink" href="#" target="_blank">mempool.space ↗</a>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-cell">
+      <div class="stat-label">BTC Sent</div>
+      <div class="stat-val" id="statSent">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">BTC Received</div>
+      <div class="stat-val" id="statReceived">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">First Block</div>
+      <div class="stat-val" id="statFirst">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Last Block</div>
+      <div class="stat-val" id="statLast">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Wallets in Network</div>
+      <div class="stat-val" id="statWallets">—</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-label">Transactions in Network</div>
+      <div class="stat-val" id="statTxs">—</div>
+    </div>
+  </div>
+
+  <!-- Findings -->
+  <div class="findings-header">
+    <div class="eyebrow" style="margin-bottom:0">// Findings</div>
+    <div class="findings-count" id="findingsCount">—</div>
+  </div>
+  <div id="findingsList"></div>
+
+  <div class="page-footer">
+    <span>Full-chain BFS · 3 hops · LightGBM + SHAP</span>
+    <a class="mempool-btn" id="mempoolFooter" href="#" target="_blank" style="border:none;padding:0">View on mempool.space ↗</a>
+  </div>
+
+</div>
+
+<script>
+  const MOCK = {
+    bitcoin_wallet: "bc1qq7g4sfchkgs956mtwprxvtcj4r2zpuw8sacqxp",
+    btc_sent: 0.00014594,
+    btc_received: 0.0025,
+    total_txs_analyzed: 71,
+    total_wallets_analyzed: 54,
+    first_active_block: 833855,
+    last_active_block: 861612,
+    risk_probability: "medium_(needs_review)",
+    top_reasons: [
+      {
+        feature: "btc_volume_hop0_reverse",
+        display_name: "Large amount of Bitcoin received",
+        shap_value: 0.573,
+        direction: "increases_risk",
+        feature_value: 0.0025,
+        influence_pct: 18,
+        explanation_what: "This measures the total BTC received directly by the wallet. Unusually large inflows relative to a wallet's activity level can be a signal the model weighs toward higher risk.",
+        explanation_why: "This wallet received 0.0025 BTC, which is disproportionately large compared to its outgoing activity (0.00015 BTC sent). That asymmetry contributed to a higher risk signal."
+      },
+      {
+        feature: "btc_volume_hop0_asymmetry",
+        display_name: "Uneven Bitcoin send/receive amounts",
+        shap_value: -0.519,
+        direction: "decreases_risk",
+        feature_value: -0.889684,
+        influence_pct: 16,
+        explanation_what: "This captures how balanced a wallet's send and receive volumes are. Wallets with very lopsided flows — mostly receiving or mostly sending — can suggest specific use patterns.",
+        explanation_why: "This wallet's send/receive ratio is -0.89, meaning it receives significantly more than it sends. In this case, that pattern was associated with lower risk by the model — consistent with a typical end-user wallet."
+      },
+      {
+        feature: "unique_neighbors_hop0_forward",
+        display_name: "Sends to many unique wallets",
+        shap_value: 0.3144,
+        direction: "increases_risk",
+        feature_value: 1.0,
+        influence_pct: 10,
+        explanation_what: "This counts the number of distinct wallets this address has sent funds to. Wallets that distribute funds to many unique recipients are sometimes associated with exchange payouts or peel-chain laundering.",
+        explanation_why: "This wallet sent to only 1 unique address, which is a low count. However, given its limited overall activity, this contributed a small positive risk signal."
+      }
+    ]
+  };
+
+  const RISK_LABELS = {
+    very_high: "Very High Risk",
+    high:      "High Risk",
+    medium:    "Medium Risk",
+    low:       "Low Risk",
+    very_low:  "Very Low Risk",
+    "medium_(needs_review)": "Medium Risk"
+  };
+
+  function riskKey(r) {
+    return (r || "medium").replace("_(needs_review)", "");
+  }
+
+  function formatBtc(v) {
+    if (v == null) return "—";
+    if (v === 0) return "0 BTC";
+    if (v < 0.0001) return v.toExponential(2) + " BTC";
+    return v.toFixed(6) + " BTC";
+  }
+
+  function render(data) {
+    const rk    = riskKey(data.risk_probability);
+    const label = RISK_LABELS[data.risk_probability] || "Medium Risk";
+    const addr  = data.bitcoin_wallet || "";
+
+    // Risk header
+    const bucket = document.getElementById("riskBucket");
+    bucket.textContent = label;
+    bucket.className = `risk-bucket risk-${rk}`;
+    document.getElementById("riskAddr").textContent = addr;
+
+    // Mempool links
+    const url = `https://mempool.space/address/${addr}`;
+    document.getElementById("mempoolLink").href   = url;
+    document.getElementById("mempoolFooter").href = url;
+
+    // Stats
+    document.getElementById("statSent").textContent     = formatBtc(data.btc_sent);
+    document.getElementById("statReceived").textContent = formatBtc(data.btc_received);
+    document.getElementById("statTxs").textContent      = (data.total_txs_analyzed || 0).toLocaleString();
+    document.getElementById("statWallets").textContent  = (data.total_wallets_analyzed || 0).toLocaleString();
+    document.getElementById("statFirst").textContent    = data.first_active_block ? "#" + data.first_active_block.toLocaleString() : "—";
+    document.getElementById("statLast").textContent     = data.last_active_block  ? "#" + data.last_active_block.toLocaleString()  : "—";
+
+    // Findings
+    const reasons = data.top_reasons || [];
+    const countEl = document.getElementById("findingsCount");
+    const listEl  = document.getElementById("findingsList");
+
+    if (reasons.length === 0) {
+      countEl.textContent = "No flags";
+      countEl.className   = "findings-count";
+      listEl.innerHTML    = `<div style="color:var(--muted);font-size:13px;padding:10px 0">No significant findings detected.</div>`;
+    } else {
+      const riskFlags = reasons.filter(r => r.direction === "increases_risk").length;
+      countEl.textContent = riskFlags > 0 ? riskFlags + " flag" + (riskFlags > 1 ? "s" : "") : reasons.length + " signal" + (reasons.length > 1 ? "s" : "");
+      countEl.className   = "findings-count" + (riskFlags > 0 ? " flagged" : "");
+
+      listEl.innerHTML = reasons.map((r, i) => {
+        const isRisk    = r.direction === "increases_risk";
+        const dotColor  = isRisk ? "var(--risk-vh)" : "var(--risk-vl)";
+        const barColor  = isRisk ? "var(--risk-h)"  : "var(--risk-vl)";
+        const tagClass  = isRisk ? "tag-risk" : "tag-safe";
+        const tagText   = isRisk ? "risk factor" : "safe signal";
+        const pct       = r.influence_pct || 0;
+        const explanation = r.shap_explanation || "Detailed explanation coming soon.";
+
+        return `
+          <div class="finding" id="finding-${i}">
+            <div class="finding-summary" onclick="toggleFinding(${i})">
+              <div class="finding-indicator" style="background:${dotColor}"></div>
+              <div class="finding-main">
+                <div class="finding-name">${r.display_name}</div>
+                <div class="finding-meta">influence: ${pct}% of model explanation</div>
+              </div>
+              <div class="finding-right">
+                <div class="influence-bar-wrap">
+                  <div class="influence-bar" style="width:${pct}%;background:${barColor}"></div>
+                </div>
+                <div class="influence-pct">${pct}%</div>
+                <div class="direction-tag ${tagClass}">${tagText}</div>
+                <div class="chevron">›</div>
+              </div>
+            </div>
+            <div class="finding-detail">
+              <div class="detail-what">${explanation}</div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    document.getElementById("results").classList.add("visible");
+  }
+
+  function toggleFinding(i) {
+    document.getElementById("finding-" + i).classList.toggle("open");
+  }
+
+  function runAnalysis() {
+    const addr = document.getElementById("addressInput").value.trim();
+    if (!addr) return;
+
+    document.getElementById("results").classList.remove("visible");
+    document.getElementById("loadingState").classList.add("visible");
+
+    setTimeout(() => {
+      document.getElementById("loadingState").classList.remove("visible");
+      render({ ...MOCK, bitcoin_wallet: addr });
+    }, 900);
+  }
+
+  function copyAddress() {
+    navigator.clipboard.writeText(document.getElementById("riskAddr").textContent);
+  }
+
+  document.getElementById("addressInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") runAnalysis();
+  });
+
+  // Pre-load example
+  document.getElementById("addressInput").value = MOCK.bitcoin_wallet;
+  render(MOCK);
+</script>
+</body>
+</html>
