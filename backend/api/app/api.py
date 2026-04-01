@@ -5,12 +5,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from model.loader import lgb_model
 from app.routers import include_routers
+from app.stats import shap_explainer
 
 
 app = FastAPI()
 
 app.state.bitguard_model = lgb_model
-
+app.state.shap_tree = shap_explainer.init_explainer(app.state.bitguard_model)
 
 app.add_middleware(
     CORSMiddleware,

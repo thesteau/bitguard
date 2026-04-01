@@ -44,12 +44,12 @@ def compute_wallet_stats(df: pd.DataFrame) -> dict:
     # ── Hop 0 only — seed's direct transactions ───────────────────────────────
     hop0 = df[df["edge_min_hop"] == 0]
 
-    sent     = hop0[hop0["tx_direction"] == "source_to_target"]["btc_amount"].sum()
+    sent = hop0[hop0["tx_direction"] == "source_to_target"]["btc_amount"].sum()
     received = hop0[hop0["tx_direction"] == "target_to_source"]["btc_amount"].sum()
 
     hop0_blocks = hop0["block_height"].dropna()
     first_block = int(hop0_blocks.min()) if not hop0_blocks.empty else None
-    last_block  = int(hop0_blocks.max()) if not hop0_blocks.empty else None
+    last_block = int(hop0_blocks.max()) if not hop0_blocks.empty else None
 
     # ── All wallets in neighborhood (excluding seed) ───────────────────────────
     all_addresses = set(df["source_id"].dropna().tolist() + df["target_id"].dropna().tolist())
@@ -58,10 +58,10 @@ def compute_wallet_stats(df: pd.DataFrame) -> dict:
         all_addresses.discard(seed)
 
     return {
-        "btc_sent":           round(float(sent), 8),
-        "btc_received":       round(float(received), 8),
-        "total_txs":          int(len(df)),
-        "total_wallets":      int(len(all_addresses)),
+        "btc_sent":  round(float(sent), 8),
+        "btc_received": round(float(received), 8),
+        "total_txs_analyzed": int(len(df)),
+        "total_wallets_analyzed": int(len(all_addresses)),
         "first_active_block": first_block,
         "last_active_block":  last_block,
     }
