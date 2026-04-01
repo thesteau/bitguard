@@ -4,8 +4,7 @@ from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
 from app.helpers.transact_database import get_data_from_database
-from app.helpers.model_prediction import predict_score
-from pipeline_code.bitcoin_fraud_pipeline import build_features
+from pipeline_code.pipeline import build_features
 
 
 router = APIRouter()
@@ -19,10 +18,10 @@ class ValidationRequest(BaseModel):
 @router.post("/validate")
 async def validate_address(payload: ValidationRequest, request: Request):
     model = request.app.state.bitguard_model
-    scaler = request.app.state.bitguard_scaler
 
     logger.info("INFO: Received validation request for seed_parameter: %s", payload.seed_parameter)
 
+    # Extract
     try:
         bitcoin_data = get_data_from_database(payload.model_dump())
     except Exception as e:
@@ -33,8 +32,9 @@ async def validate_address(payload: ValidationRequest, request: Request):
         logger.error("ERROR: No data found for the given parameters.")
         raise HTTPException(status_code=404, detail="No data found for the given parameters.")
 
+    # Transform
     transformed_df = build_features(bitcoin_data)
-    X_scaled = scaler.transform(transformed_df)
 
-    result = predict_score(model, X_scaled)
+    # Predict
+    result = float(model.predict_proba(transformed_df)[0][1])
     return {"score": result}
