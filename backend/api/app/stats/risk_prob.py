@@ -4,7 +4,7 @@ def prob_to_risk(prob: float) -> str:
     elif prob >= 0.5:
         return "high"
     elif prob >= 0.1:
-        return "medium_(needs_review)"
+        return "mixed_signal"
     elif prob >= 0.01:
         return "low"
     else:
