@@ -1,4 +1,3 @@
-import random
 import json
 import logging
 
@@ -23,53 +22,46 @@ class SubmitRequest(BaseModel):
 
 
 async def validate_address(seed_parameter: str):
+    response = None
+
     try:
-        res = requests.post(
+        response = requests.post(
             f"{BACKEND_URL}/validate",
             json={"seed_parameter": seed_parameter},
             timeout=30
         )
-        res.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        logger.error("ERROR: Error connecting to validation backend: %s", str(e))
+        response.raise_for_status()
+    except requests.exceptions.RequestException as exc:
+        logger.error("ERROR: Error connecting to validation backend: %s", str(exc))
 
-        if res.status_code >= 500:
-            logger.error("ERROR: Backend error: %s - %s", res.status_code, res.text)
-            raise HTTPException(status_code=502,
-                                detail=f"Backend error: {res.status_code}, try again later or contact us."
-                                ) from e
+        backend_detail = None
+        backend_status = response.status_code if response is not None else None
+
+        if response is not None:
+            try:
+                backend_detail = response.json().get("detail")
+            except ValueError:
+                backend_detail = response.text or None
+
+        if backend_status is not None:
+            if backend_status >= 500:
+                logger.error("ERROR: Backend error: %s - %s", backend_status, backend_detail or "")
+                raise HTTPException(
+                    status_code=502,
+                    detail=backend_detail or f"Backend error: {backend_status}, try again later or contact us."
+                ) from exc
+
+            raise HTTPException(
+                status_code=backend_status,
+                detail=backend_detail or "Error validating request."
+            ) from exc
 
         raise HTTPException(
             status_code=502,
             detail="Error validating request, try again later or contact us."
-        ) from e
+        ) from exc
 
-    json_data = res.json()
-
-
-    ##
-    ## ADD REAL CHANGES HERE
-
-
-    ##
-
-    mocked_types = [
-        "RANSOMWARE",
-        "UNKNOWN",
-        "OKAY",
-    ]
-
-    predicted_type = random.choice(mocked_types)
-    risk_score = len(json_data) if json_data else 50
-    confidence = round(random.uniform(0.60, 0.99), 2)
-
-    if risk_score >= 80:
-        recommendation = "DO_NOT_SEND"
-    elif risk_score >= 50:
-        recommendation = "CAUTION"
-    else:
-        recommendation = "SAFE"
-    return risk_score, predicted_type, confidence, recommendation
+    return response.json()
 
 
 def is_allowed_address(address: str):
@@ -100,14 +92,7 @@ async def submit(req: SubmitRequest):
     if cached:
         return json.loads(cached)
 
-    risk_score, predicted_type, confidence, recommendation = await validate_address(seed_parameter)
-
-    result = {
-        "risk_score": risk_score,
-        "predicted_type": predicted_type,
-        "confidence": confidence,
-        "recommendation": recommendation
-    }
+    result = await validate_address(seed_parameter)
 
     redis_caching.setex(cache_key, 259200, json.dumps(result))
 

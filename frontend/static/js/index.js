@@ -1,88 +1,383 @@
-// For indexhtml
-
+// DOM references
 const form = document.getElementById("searchForm");
 const input = document.getElementById("addressInput");
 const preview = document.getElementById("addressPreview");
 const btn = document.getElementById("searchBtn");
+const formAlert = document.getElementById("formAlert");
+const mempoolLinkEl = document.getElementById("mempoolLink");
+const riskProbabilityEl = document.getElementById("riskProbability");
+const statTxsEl = document.getElementById("statTxs");
+const statWalletsEl = document.getElementById("statWallets");
+const statSentEl = document.getElementById("statSent");
+const statReceivedEl = document.getElementById("statReceived");
+const statFirstEl = document.getElementById("statFirst");
+const statLastEl = document.getElementById("statLast");
+const findingsListEl = document.getElementById("findingsList");
+const detailCopyButtons = Array.from(document.querySelectorAll(".detail-copy-btn"));
+// const riskScoreEl = document.getElementById("riskScore");
 
-const riskScoreEl = document.getElementById("riskScore");
-const confidenceEl = document.getElementById("confidence");
-const recommendationEl = document.getElementById("recommendation");
+// Static config
+const defaultButtonHtml = btn.innerHTML;
+const MEMPOOL_ADDRESS_URL = "https://mempool.space/address/";
+const EMPTY_ADDRESS_PREVIEW = "Enter a new valid bitcoin address...";
+const FINDINGS_EMPTY_TEXT = "Run an analysis to see the main risk signals.";
+const FINDINGS_NONE_TEXT = "No explainable reasons were returned for this wallet.";
+const FINDINGS_LOADING_TEXT = "Analyzing wallet activity...";
+const DETAIL_EXPLANATION_PLACEHOLDER = "Detailed explanation coming soon.";
 
-function updatePreview() {
-  const value = input.value.trim();
-  preview.textContent = value ? value : "Enter a new valid bitcoin address...";
+const RISK_LABELS = {
+  very_high: "Very High Risk",
+  high: "High Risk",
+  medium: "Medium Risk",
+  low: "Low Risk",
+  very_low: "Very Low Risk",
+  "medium_(needs_review)": "Medium Risk",
+};
+
+const detailValueElements = {
+  statSent: statSentEl,
+  statReceived: statReceivedEl,
+  statFirst: statFirstEl,
+  statLast: statLastEl,
+};
+
+let alertTimeoutId = null;
+
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function getInputAddress() {
+  return input.value.trim();
+}
+
+function formatRiskLabel(value) {
+  if (!value) {
+    return "Unknown";
+  }
+
+  return RISK_LABELS[value] || String(value);
+}
+
+function formatBtc(value) {
+  const numeric = Number(value);
+
+  if (!Number.isFinite(numeric)) {
+    return "-";
+  }
+
+  if (numeric === 0) {
+    return "0 BTC";
+  }
+
+  if (Math.abs(numeric) < 0.0001) {
+    return `${numeric.toExponential(2)} BTC`;
+  }
+
+  return `${numeric.toFixed(8)} BTC`;
+}
+
+function formatNumber(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric.toLocaleString() : "-";
+}
+
+function formatBlock(value) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? `#${numeric.toLocaleString()}` : "-";
+}
+
+function formatReasonValue(value) {
+  if (value === null || value === undefined || value === "") {
+    return "-";
+  }
+
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) {
+    return String(value);
+  }
+
+  if (numeric === 0) {
+    return "0";
+  }
+
+  if (Math.abs(numeric) < 0.001) {
+    return numeric.toExponential(2);
+  }
+
+  return numeric.toLocaleString(undefined, {
+    maximumFractionDigits: 6,
+  });
+}
+
+function getReasonExplanation(reason) {
+  const candidates = [
+    reason.shap_explanation,
+    reason.explanation,
+    reason.explanation_why,
+    reason.explanation_what,
+  ];
+
+  const explanation = candidates.find((value) => typeof value === "string" && value.trim());
+  return explanation ? explanation.trim() : DETAIL_EXPLANATION_PLACEHOLDER;
+}
+
+// UI helpers
+function updatePreview(address = getInputAddress()) {
+  preview.textContent = address ? address : EMPTY_ADDRESS_PREVIEW;
+}
+
+function resetRiskLevelState() {
+  delete riskProbabilityEl.dataset.risk;
+}
+
+function setWalletActions(address) {
+  const hasAddress = Boolean(address);
+
+  if (!mempoolLinkEl) {
+    return;
+  }
+
+  if (hasAddress) {
+    mempoolLinkEl.href = `${MEMPOOL_ADDRESS_URL}${encodeURIComponent(address)}`;
+    mempoolLinkEl.classList.remove("disabled");
+    mempoolLinkEl.setAttribute("aria-disabled", "false");
+    return;
+  }
+
+  mempoolLinkEl.href = "#";
+  mempoolLinkEl.classList.add("disabled");
+  mempoolLinkEl.setAttribute("aria-disabled", "true");
+}
+
+function setDetailCopyState(button, value) {
+  if (!button) {
+    return;
+  }
+
+  button.disabled = !(value && value !== "-");
+}
+
+function syncDetailCopyButtons() {
+  detailCopyButtons.forEach((button) => {
+    const targetId = button.dataset.copyTarget;
+    const targetEl = targetId ? detailValueElements[targetId] : null;
+    const value = targetEl?.textContent?.trim() || "";
+
+    setDetailCopyState(button, value);
+  });
+}
+
+function flashCopyButton(button) {
+  if (!button) {
+    return;
+  }
+
+  button.classList.add("copied");
+  window.setTimeout(() => {
+    button.classList.remove("copied");
+  }, 1200);
+}
+
+async function copyValue(value, errorMessage, button) {
+  try {
+    await navigator.clipboard.writeText(value);
+    flashCopyButton(button);
+  } catch (error) {
+    showFormAlert(errorMessage);
+    console.error(errorMessage, error);
+  }
+}
+
+function renderFindings(reasons) {
+  if (!Array.isArray(reasons) || reasons.length === 0) {
+    findingsListEl.innerHTML = `<div class="finding-empty">${FINDINGS_NONE_TEXT}</div>`;
+    return;
+  }
+
+  findingsListEl.innerHTML = reasons.map((reason) => {
+    const direction = reason.direction === "decreases_risk" ? "decreases_risk" : "increases_risk";
+    const directionLabel = direction === "decreases_risk" ? "Decreases Risk" : "Increases Risk";
+    const influence = Number(reason.influence_pct);
+    const influenceWidth = Number.isFinite(influence) ? Math.max(0, Math.min(influence, 100)) : 0;
+    const explanation = getReasonExplanation(reason);
+
+    return `
+      <div class="finding-item">
+        <div class="finding-title-row">
+          <h5 class="finding-title">${escapeHtml(reason.display_name || reason.feature || "Unnamed signal")}</h5>
+          <span class="finding-badge ${direction}">${directionLabel}</span>
+        </div>
+        <div class="finding-meta">
+          <span class="finding-meta-item"><strong>Influence</strong>${Number.isFinite(influence) ? `${influence}%` : "-"}</span>
+          <span class="finding-meta-item"><strong>Feature</strong>${escapeHtml(formatReasonValue(reason.feature_value))}</span>
+          <span class="finding-meta-item"><strong>SHAP</strong>${escapeHtml(formatReasonValue(reason.shap_value))}</span>
+        </div>
+        <div class="finding-bar-track" aria-hidden="true">
+          <div class="finding-bar-fill ${direction}" style="width: ${influenceWidth}%"></div>
+        </div>
+        <button type="button" class="finding-explanation-toggle" aria-expanded="false">Detailed Explanation</button>
+        <div class="finding-explanation">
+          <p class="finding-explanation-text">${escapeHtml(explanation)}</p>
+        </div>
+      </div>
+    `;
+  }).join("");
 }
 
 function setEmpty() {
-  riskScoreEl.textContent = "None"
-  confidenceEl.textContent = "?.??";
-  recommendationEl.textContent = "Unknown";
-  recommendationEl.className = "danger";
+  // riskScoreEl.textContent = "None";
+  riskProbabilityEl.textContent = "Unknown";
+  statTxsEl.textContent = "-";
+  statWalletsEl.textContent = "-";
+  statSentEl.textContent = "-";
+  statReceivedEl.textContent = "-";
+  statFirstEl.textContent = "-";
+  statLastEl.textContent = "-";
+  findingsListEl.innerHTML = `<div class="finding-empty">${FINDINGS_EMPTY_TEXT}</div>`;
+
+  resetRiskLevelState();
+  setWalletActions("");
+  syncDetailCopyButtons();
 }
 
 function setLoading() {
   btn.disabled = true;
-  btn.textContent = "…";
+  btn.innerHTML = '<span class="search-icon">...</span><span>Analyze</span>';
 
-  riskScoreEl.textContent = "…";
-  confidenceEl.textContent = "…";
-  recommendationEl.textContent = "Checking…";
-  recommendationEl.className = "warn";
+  // riskScoreEl.textContent = "...";
+  riskProbabilityEl.textContent = "Checking...";
+  statTxsEl.textContent = "...";
+  statWalletsEl.textContent = "...";
+  statSentEl.textContent = "...";
+  statReceivedEl.textContent = "...";
+  statFirstEl.textContent = "...";
+  statLastEl.textContent = "...";
+  findingsListEl.innerHTML = `<div class="finding-empty">${FINDINGS_LOADING_TEXT}</div>`;
+
+  resetRiskLevelState();
+  setWalletActions("");
+  syncDetailCopyButtons();
 }
 
 function clearLoading() {
   btn.disabled = false;
-  btn.textContent = "🔍";
+  btn.innerHTML = defaultButtonHtml;
 }
 
 function setResult(data) {
-  riskScoreEl.textContent = data.risk_score ?? "None";
+  const address = data.bitcoin_wallet || getInputAddress();
 
-  confidenceEl.textContent =
-    data.confidence !== undefined && data.confidence !== null
-      ? Number(data.confidence).toFixed(2)
-      : "?.??";
+  updatePreview(address);
 
-  const rec = data.recommendation ?? "Unknown";
-  recommendationEl.textContent = rec;
+  // riskScoreEl.textContent = formatRiskScore(data.risk_score);
+  riskProbabilityEl.textContent = formatRiskLabel(data.risk_probability);
+  statTxsEl.textContent = formatNumber(data.total_txs_analyzed);
+  statWalletsEl.textContent = formatNumber(data.total_wallets_analyzed);
+  statSentEl.textContent = formatBtc(data.btc_sent);
+  statReceivedEl.textContent = formatBtc(data.btc_received);
+  statFirstEl.textContent = formatBlock(data.first_active_block);
+  statLastEl.textContent = formatBlock(data.last_active_block);
 
-  recommendationEl.classList.remove("danger", "warn", "success");
-
-  if (rec === "DO_NOT_SEND") {
-    recommendationEl.classList.add("danger");
-  } else if (rec === "CAUTION") {
-    recommendationEl.classList.add("warn");
-  } else if (rec === "SAFE") {
-    recommendationEl.classList.add("success");
-  } else {
-    recommendationEl.classList.add("danger");
+  resetRiskLevelState();
+  if (data.risk_probability) {
+    riskProbabilityEl.dataset.risk = String(data.risk_probability);
   }
+
+  setWalletActions(address);
+  syncDetailCopyButtons();
+  renderFindings(data.top_reasons);
 }
 
-input.addEventListener("input", updatePreview);
-
 function showFormAlert(message) {
-  const alertContainer = document.getElementById("formAlert");
+  if (alertTimeoutId) {
+    clearTimeout(alertTimeoutId);
+    alertTimeoutId = null;
+  }
 
-  alertContainer.innerHTML = `
-    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  formAlert.innerHTML = `
+    <div class="toast-alert" role="alert" aria-live="assertive">
+      <div class="toast-copy">
+        <p class="toast-title">Error</p>
+        <p class="toast-message">${escapeHtml(message)}</p>
+      </div>
+      <button type="button" class="toast-close" aria-label="Dismiss error">&times;</button>
     </div>
   `;
 
-  setTimeout(() => {
-    alertContainer.innerHTML = "";
+  const toastEl = formAlert.querySelector(".toast-alert");
+  const closeBtn = formAlert.querySelector(".toast-close");
+
+  const dismissAlert = () => {
+    if (alertTimeoutId) {
+      clearTimeout(alertTimeoutId);
+      alertTimeoutId = null;
+    }
+
+    if (!toastEl) {
+      formAlert.innerHTML = "";
+      return;
+    }
+
+    toastEl.classList.remove("visible");
+
+    window.setTimeout(() => {
+      formAlert.innerHTML = "";
+    }, 250);
+  };
+
+  closeBtn?.addEventListener("click", dismissAlert, { once: true });
+
+  window.requestAnimationFrame(() => {
+    toastEl?.classList.add("visible");
+  });
+
+  alertTimeoutId = window.setTimeout(() => {
+    alertTimeoutId = null;
+    dismissAlert();
   }, 5000);
 }
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// Event handlers
+function handleFindingsClick(event) {
+  const toggle = event.target.closest(".finding-explanation-toggle");
+  if (!toggle) {
+    return;
+  }
 
-  const address = input.value.trim();
+  const findingItem = toggle.closest(".finding-item");
+  if (!findingItem) {
+    return;
+  }
 
-  updatePreview();
+  const isOpen = findingItem.classList.toggle("open");
+  toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+}
+
+async function handleDetailCopyClick(button) {
+  const targetId = button.dataset.copyTarget;
+  const label = button.dataset.copyLabel || "value";
+  const targetEl = targetId ? detailValueElements[targetId] : null;
+  const value = targetEl?.textContent?.trim() || "";
+
+  if (!value || value === "-") {
+    return;
+  }
+
+  await copyValue(value, `Could not copy ${label}.`, button);
+}
+
+async function handleSubmit(event) {
+  event.preventDefault();
+
+  const address = getInputAddress();
+  updatePreview(address);
 
   if (!address) {
     setEmpty();
@@ -93,35 +388,53 @@ form.addEventListener("submit", async (e) => {
     showFormAlert("Please enter a valid Bitcoin address starting with a 1, 3, or bc1.");
     input.focus();
     setEmpty();
+    updatePreview(address);
     return;
   }
 
   setLoading();
 
   try {
-    const res = await fetch("/submit", {
+    const response = await fetch("/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ seed_parameter: address }),
     });
 
-    const payload = await res.json();
+    let payload = {};
+    try {
+      payload = await response.json();
+    } catch (parseError) {
+      payload = {};
+    }
 
-    if (!res.ok) {
-      const message = payload.detail || "Server returned an error.";
-      showFormAlert(message);
-      recommendationEl.textContent = "Error";
-      recommendationEl.className = "danger";
+    if (!response.ok) {
+      showFormAlert(payload.detail || "Server returned an error.");
+      setEmpty();
+      updatePreview(address);
       return;
     }
 
     setResult(payload);
-  } catch (err) {
+  } catch (error) {
     showFormAlert("Could not reach the server. Please try again.");
-    recommendationEl.textContent = "Error";
-    recommendationEl.className = "danger";
-    console.error("Error submitting form:", err);
+    setEmpty();
+    updatePreview(address);
+    console.error("Error submitting form:", error);
   } finally {
     clearLoading();
   }
+}
+
+// Wire up events
+input.addEventListener("input", () => updatePreview());
+findingsListEl?.addEventListener("click", handleFindingsClick);
+
+detailCopyButtons.forEach((button) => {
+  button.addEventListener("click", () => handleDetailCopyClick(button));
 });
+
+form.addEventListener("submit", handleSubmit);
+
+// Initial state
+setEmpty();
