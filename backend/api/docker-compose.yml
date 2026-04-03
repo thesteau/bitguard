@@ -1,6 +1,5 @@
 services:
   api:
-    # Replace build with image for production
     build: .
     container_name: btc-api
     ports:

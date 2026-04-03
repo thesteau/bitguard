@@ -1,7 +1,7 @@
 // DOM references
 const form = document.getElementById("searchForm");
 const input = document.getElementById("addressInput");
-const preview = document.getElementById("addressPreview");
+// const preview = document.getElementById("addressPreview");
 const btn = document.getElementById("searchBtn");
 const formAlert = document.getElementById("formAlert");
 const mempoolLinkEl = document.getElementById("mempoolLink");
@@ -19,7 +19,7 @@ const detailCopyButtons = Array.from(document.querySelectorAll(".detail-copy-btn
 // Static config
 const defaultButtonHtml = btn.innerHTML;
 const MEMPOOL_ADDRESS_URL = "https://mempool.space/address/";
-const EMPTY_ADDRESS_PREVIEW = "Enter a new valid bitcoin address...";
+// const EMPTY_ADDRESS_PREVIEW = "Enter a new valid bitcoin address...";
 const FINDINGS_EMPTY_TEXT = "Run an analysis to see the main risk signals.";
 const FINDINGS_NONE_TEXT = "No explainable reasons were returned for this wallet.";
 const FINDINGS_LOADING_TEXT = "Analyzing wallet activity...";
@@ -129,9 +129,10 @@ function getReasonExplanation(reason) {
 }
 
 // UI helpers
-function updatePreview(address = getInputAddress()) {
-  preview.textContent = address ? address : EMPTY_ADDRESS_PREVIEW;
-}
+// Wallet preview was deprecated in the template, so its JS has been disabled too.
+// function updatePreview(address = getInputAddress()) {
+//   preview.textContent = address ? address : EMPTY_ADDRESS_PREVIEW;
+// }
 
 function resetRiskLevelState() {
   delete riskProbabilityEl.dataset.risk;
@@ -211,16 +212,8 @@ function renderFindings(reasons) {
     return `
       <div class="finding-item">
         <div class="finding-title-row">
-          <h5 class="finding-title">${escapeHtml(reason.display_name || reason.feature || "Unnamed signal")}</h5>
+          <p class="finding-title">${escapeHtml(reason.display_name || reason.feature || "Unnamed signal")}</p>
           <span class="finding-badge ${direction}">${directionLabel}</span>
-        </div>
-        <div class="finding-meta">
-          <span class="finding-meta-item"><strong>Influence</strong>${Number.isFinite(influence) ? `${influence}%` : "-"}</span>
-          <span class="finding-meta-item"><strong>Feature</strong>${escapeHtml(formatReasonValue(reason.feature_value))}</span>
-          <span class="finding-meta-item"><strong>SHAP</strong>${escapeHtml(formatReasonValue(reason.shap_value))}</span>
-        </div>
-        <div class="finding-bar-track" aria-hidden="true">
-          <div class="finding-bar-fill ${direction}" style="width: ${influenceWidth}%"></div>
         </div>
         <button type="button" class="finding-explanation-toggle" aria-expanded="false">Detailed Explanation</button>
         <div class="finding-explanation">
@@ -230,6 +223,16 @@ function renderFindings(reasons) {
     `;
   }).join("");
 }
+
+// Reporting metrics to insert above
+        // <div class="finding-meta">
+        //   <span class="finding-meta-item"><strong>Influence</strong>${Number.isFinite(influence) ? `${influence}%` : "-"}</span>
+        //   <span class="finding-meta-item"><strong>Feature</strong>${escapeHtml(formatReasonValue(reason.feature_value))}</span>
+        //   <span class="finding-meta-item"><strong>SHAP</strong>${escapeHtml(formatReasonValue(reason.shap_value))}</span>
+        // </div>
+        // <div class="finding-bar-track" aria-hidden="true">
+        //   <div class="finding-bar-fill ${direction}" style="width: ${influenceWidth}%"></div>
+        // </div>
 
 function setEmpty() {
   // riskScoreEl.textContent = "None";
@@ -274,7 +277,7 @@ function clearLoading() {
 function setResult(data) {
   const address = data.bitcoin_wallet || getInputAddress();
 
-  updatePreview(address);
+  // updatePreview(address);
 
   // riskScoreEl.textContent = formatRiskScore(data.risk_score);
   riskProbabilityEl.textContent = formatRiskLabel(data.risk_probability);
@@ -373,11 +376,35 @@ async function handleDetailCopyClick(button) {
   await copyValue(value, `Could not copy ${label}.`, button);
 }
 
+async function readResponsePayload(response) {
+  try {
+    return await response.json();
+  } catch (parseError) {
+    return null;
+  }
+}
+
+function getResponseErrorMessage(response, payload) {
+  if (payload && typeof payload.detail === "string" && payload.detail.trim()) {
+    return payload.detail.trim();
+  }
+
+  if (response.status === 404) {
+    return "Wallet address not found.";
+  }
+
+  if (response.status >= 400 && response.status < 500) {
+    return "Request could not be processed.";
+  }
+
+  return "Server returned an error.";
+}
+
 async function handleSubmit(event) {
   event.preventDefault();
 
   const address = getInputAddress();
-  updatePreview(address);
+  // updatePreview(address);
 
   if (!address) {
     setEmpty();
@@ -388,7 +415,7 @@ async function handleSubmit(event) {
     showFormAlert("Please enter a valid Bitcoin address starting with a 1, 3, or bc1.");
     input.focus();
     setEmpty();
-    updatePreview(address);
+    // updatePreview(address);
     return;
   }
 
@@ -401,17 +428,19 @@ async function handleSubmit(event) {
       body: JSON.stringify({ seed_parameter: address }),
     });
 
-    let payload = {};
-    try {
-      payload = await response.json();
-    } catch (parseError) {
-      payload = {};
-    }
+    const payload = await readResponsePayload(response);
 
     if (!response.ok) {
-      showFormAlert(payload.detail || "Server returned an error.");
+      showFormAlert(getResponseErrorMessage(response, payload));
       setEmpty();
-      updatePreview(address);
+      // updatePreview(address);
+      return;
+    }
+
+    if (!payload || typeof payload !== "object") {
+      showFormAlert("The server returned an unreadable response. Please try again.");
+      setEmpty();
+      // updatePreview(address);
       return;
     }
 
@@ -419,7 +448,7 @@ async function handleSubmit(event) {
   } catch (error) {
     showFormAlert("Could not reach the server. Please try again.");
     setEmpty();
-    updatePreview(address);
+    // updatePreview(address);
     console.error("Error submitting form:", error);
   } finally {
     clearLoading();
@@ -427,7 +456,7 @@ async function handleSubmit(event) {
 }
 
 // Wire up events
-input.addEventListener("input", () => updatePreview());
+// input.addEventListener("input", () => updatePreview());
 findingsListEl?.addEventListener("click", handleFindingsClick);
 
 detailCopyButtons.forEach((button) => {

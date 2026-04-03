@@ -6,7 +6,6 @@ services:
     env_file:
       - .env
     environment:
-      TS_AUTHKEY: ${TS_AUTHKEY}
       TS_STATE_DIR: /var/lib/tailscale
       TS_AUTH_ONCE: "true"
       TS_USERSPACE: "false"
@@ -22,7 +21,6 @@ services:
     restart: unless-stopped
 
   database-api:
-    # Replace build with image for production
     build: .
     container_name: btc-database-api
     env_file:
