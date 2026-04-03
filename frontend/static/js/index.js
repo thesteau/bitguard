@@ -373,6 +373,30 @@ async function handleDetailCopyClick(button) {
   await copyValue(value, `Could not copy ${label}.`, button);
 }
 
+async function readResponsePayload(response) {
+  try {
+    return await response.json();
+  } catch (parseError) {
+    return null;
+  }
+}
+
+function getResponseErrorMessage(response, payload) {
+  if (payload && typeof payload.detail === "string" && payload.detail.trim()) {
+    return payload.detail.trim();
+  }
+
+  if (response.status === 404) {
+    return "Wallet address not found.";
+  }
+
+  if (response.status >= 400 && response.status < 500) {
+    return "Request could not be processed.";
+  }
+
+  return "Server returned an error.";
+}
+
 async function handleSubmit(event) {
   event.preventDefault();
 
@@ -401,15 +425,17 @@ async function handleSubmit(event) {
       body: JSON.stringify({ seed_parameter: address }),
     });
 
-    let payload = {};
-    try {
-      payload = await response.json();
-    } catch (parseError) {
-      payload = {};
-    }
+    const payload = await readResponsePayload(response);
 
     if (!response.ok) {
-      showFormAlert(payload.detail || "Server returned an error.");
+      showFormAlert(getResponseErrorMessage(response, payload));
+      setEmpty();
+      updatePreview(address);
+      return;
+    }
+
+    if (!payload || typeof payload !== "object") {
+      showFormAlert("The server returned an unreadable response. Please try again.");
       setEmpty();
       updatePreview(address);
       return;
