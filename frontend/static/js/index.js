@@ -212,7 +212,7 @@ function renderFindings(reasons) {
     return `
       <div class="finding-item">
         <div class="finding-title-row">
-          <h5 class="finding-title">${escapeHtml(reason.display_name || reason.feature || "Unnamed signal")}</h5>
+          <p class="finding-title">${escapeHtml(reason.display_name || reason.feature || "Unnamed signal")}</p>
           <span class="finding-badge ${direction}">${directionLabel}</span>
         </div>
         <button type="button" class="finding-explanation-toggle" aria-expanded="false">Detailed Explanation</button>
