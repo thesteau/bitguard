@@ -14,7 +14,6 @@ const statFirstEl = document.getElementById("statFirst");
 const statLastEl = document.getElementById("statLast");
 const findingsListEl = document.getElementById("findingsList");
 const detailCopyButtons = Array.from(document.querySelectorAll(".detail-copy-btn"));
-// const riskScoreEl = document.getElementById("riskScore");
 
 // Static config
 const defaultButtonHtml = btn.innerHTML;
@@ -28,10 +27,9 @@ const DETAIL_EXPLANATION_PLACEHOLDER = "Detailed explanation coming soon.";
 const RISK_LABELS = {
   very_high: "Very High Risk",
   high: "High Risk",
-  medium: "Medium Risk",
+  mixed_signal: "Mixed Signal",
   low: "Low Risk",
   very_low: "Very Low Risk",
-  "medium_(needs_review)": "Medium Risk",
 };
 
 const detailValueElements = {
@@ -91,29 +89,6 @@ function formatNumber(value) {
 function formatBlock(value) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? `#${numeric.toLocaleString()}` : "-";
-}
-
-function formatReasonValue(value) {
-  if (value === null || value === undefined || value === "") {
-    return "-";
-  }
-
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric)) {
-    return String(value);
-  }
-
-  if (numeric === 0) {
-    return "0";
-  }
-
-  if (Math.abs(numeric) < 0.001) {
-    return numeric.toExponential(2);
-  }
-
-  return numeric.toLocaleString(undefined, {
-    maximumFractionDigits: 6,
-  });
 }
 
 function getReasonExplanation(reason) {
@@ -205,8 +180,6 @@ function renderFindings(reasons) {
   findingsListEl.innerHTML = reasons.map((reason) => {
     const direction = reason.direction === "decreases_risk" ? "decreases_risk" : "increases_risk";
     const directionLabel = direction === "decreases_risk" ? "Decreases Risk" : "Increases Risk";
-    const influence = Number(reason.influence_pct);
-    const influenceWidth = Number.isFinite(influence) ? Math.max(0, Math.min(influence, 100)) : 0;
     const explanation = getReasonExplanation(reason);
 
     return `
@@ -224,18 +197,7 @@ function renderFindings(reasons) {
   }).join("");
 }
 
-// Reporting metrics to insert above
-        // <div class="finding-meta">
-        //   <span class="finding-meta-item"><strong>Influence</strong>${Number.isFinite(influence) ? `${influence}%` : "-"}</span>
-        //   <span class="finding-meta-item"><strong>Feature</strong>${escapeHtml(formatReasonValue(reason.feature_value))}</span>
-        //   <span class="finding-meta-item"><strong>SHAP</strong>${escapeHtml(formatReasonValue(reason.shap_value))}</span>
-        // </div>
-        // <div class="finding-bar-track" aria-hidden="true">
-        //   <div class="finding-bar-fill ${direction}" style="width: ${influenceWidth}%"></div>
-        // </div>
-
 function setEmpty() {
-  // riskScoreEl.textContent = "None";
   riskProbabilityEl.textContent = "Unknown";
   statTxsEl.textContent = "-";
   statWalletsEl.textContent = "-";
@@ -254,7 +216,6 @@ function setLoading() {
   btn.disabled = true;
   btn.innerHTML = '<span class="search-icon">...</span><span>Analyze</span>';
 
-  // riskScoreEl.textContent = "...";
   riskProbabilityEl.textContent = "Checking...";
   statTxsEl.textContent = "...";
   statWalletsEl.textContent = "...";
@@ -279,7 +240,6 @@ function setResult(data) {
 
   // updatePreview(address);
 
-  // riskScoreEl.textContent = formatRiskScore(data.risk_score);
   riskProbabilityEl.textContent = formatRiskLabel(data.risk_probability);
   statTxsEl.textContent = formatNumber(data.total_txs_analyzed);
   statWalletsEl.textContent = formatNumber(data.total_wallets_analyzed);
