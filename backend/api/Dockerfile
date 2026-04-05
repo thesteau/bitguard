@@ -1,4 +1,18 @@
-FROM python:3.11-slim
+FROM python:3.11-slim AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    VIRTUAL_ENV=/opt/venv \
+    PATH="/opt/venv/bin:$PATH"
+
+WORKDIR /build
+
+COPY requirements.txt .
+
+RUN python -m venv "$VIRTUAL_ENV" \
+    && pip install --no-cache-dir -r requirements.txt
+
+FROM python:3.11-slim AS runtime
 
 WORKDIR /app
 
@@ -6,12 +20,19 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    VIRTUAL_ENV=/opt/venv \
+    PATH="/opt/venv/bin:$PATH" \
+    PYTHONPATH=/app
 
-COPY . .
+COPY --from=builder /opt/venv /opt/venv
+COPY app ./app
+COPY model ./model
+COPY pipeline_code ./pipeline_code
 
-ENV PYTHONPATH=/app
+# Model artifacts are mounted into /app/pickle by the compose deployments.
+RUN mkdir -p /app/pickle
 
 EXPOSE 8444
 
