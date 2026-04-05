@@ -183,7 +183,7 @@ function renderFindings(reasons) {
     const explanation = getReasonExplanation(reason);
 
     return `
-      <div class="finding-item">
+      <div class="finding-item open">
         <div class="finding-title-row">
           <p class="finding-title">${escapeHtml(reason.display_name || reason.feature || "Unnamed signal")}</p>
           <span class="finding-badge ${direction}">${directionLabel}</span>
