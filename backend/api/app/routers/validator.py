@@ -56,9 +56,10 @@ async def validate_address(payload: ValidationRequest, request: Request):
     # Return result composition
     return_result = {
         "bitcoin_wallet": payload.seed_parameter,
-        **wallet_stats_res,
-        **risk_probability,
         "top_reasons": reasons
     }
+
+    # Merge dictionary results
+    return_result |= wallet_stats_res | risk_probability
 
     return return_result

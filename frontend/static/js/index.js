@@ -66,19 +66,19 @@ function formatRiskLabel(value) {
 function formatBtc(value) {
   const numeric = Number(value);
 
-  if (!Number.isFinite(numeric)) {
-    return "-";
-  }
+  if (!Number.isFinite(numeric)) return "-";
+  if (numeric === 0) return "0 BTC";
 
-  if (numeric === 0) {
-    return "0 BTC";
-  }
+  const sig = 5;
 
-  if (Math.abs(numeric) < 0.0001) {
-    return `${numeric.toExponential(2)} BTC`;
-  }
+  const formatter = new Intl.NumberFormat("en-US", {
+    maximumSignificantDigits: sig,
+    useGrouping: false
+  });
 
-  return `${numeric.toFixed(8)} BTC`;
+  const display = formatter.format(numeric);
+
+  return `${display} BTC`;
 }
 
 function formatNumber(value) {
