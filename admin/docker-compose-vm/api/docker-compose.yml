@@ -1,6 +1,6 @@
 services:
   api:
-    image: ghcr.io/thesteau/btc-backend-api:latest
+    image: ghcr.io/thesteau/bitguard-backend-api:latest
     container_name: btc-api
     ports:
       - "8444:8444"

@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   database-api:
-    image: ghcr.io/thesteau/btc-backend-database:latest
+    image: ghcr.io/thesteau/bitguard-backend-database:latest
     container_name: btc-database-api
     env_file:
       - .env

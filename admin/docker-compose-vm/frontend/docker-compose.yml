@@ -1,6 +1,6 @@
 services:
   btc-app:
-    image: ghcr.io/thesteau/btc-frontend:latest
+    image: ghcr.io/thesteau/bitguard-frontend:latest
     container_name: btc-app
     restart: unless-stopped
     ports:
