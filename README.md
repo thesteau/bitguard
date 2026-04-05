@@ -75,30 +75,37 @@ flowchart LR
 
 U[User]
 
-subgraph Oracle["<span style='color:#2c7be5'>Oracle Cloud (Frontend)</span>"]
-    FE[Frontend Web App]
-    SUBMIT["/submit Endpoint"]
-    CACHE[(Redis Cache)]
+subgraph Oracle["<span style='color:#2c7be5'>Oracle VM</span>"]
+    direction TB
+
+    subgraph OracleFrontend["Oracle Frontend"]
+        FE[Frontend Web App]
+    end
+
+    subgraph OracleBackend["Oracle Backend"]
+        SUBMIT["/submit Endpoint"]
+        CACHE[(Redis Cache)]
+    end
 end
 
-subgraph AWS["<span style='color:#e67e22'>AWS EC2 Instance (Backend)</span>"]
-    API[Backend API + ML Model]
+subgraph AWS["<span style='color:#e67e22'>Amazon VM</span>"]
+    API[Backend API]
+    MODEL[ML Model]
+    APIRESP[API Response]
 end
 
-subgraph Graph["<span style='color:#27ae60'>Neo4j Graph Database Server</span>"]
+subgraph Graph["<span style='color:#27ae60'>Neo4j Graph Database</span>"]
     DB[(Neo4j Database)]
 end
-
-R[Response Results]
 
 U --> FE
 FE --> SUBMIT
 SUBMIT --> CACHE
 CACHE --> API
-API --> DB
-DB --> API
-API --> R
-R --> CACHE
+API -- request --> DB
+DB -- data --> MODEL
+MODEL -- prediction --> APIRESP
+APIRESP --> CACHE
 CACHE --> FE
 FE --> U
 ```
