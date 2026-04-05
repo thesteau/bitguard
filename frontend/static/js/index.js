@@ -188,7 +188,7 @@ function renderFindings(reasons) {
           <p class="finding-title">${escapeHtml(reason.display_name || reason.feature || "Unnamed signal")}</p>
           <span class="finding-badge ${direction}">${directionLabel}</span>
         </div>
-        <button type="button" class="finding-explanation-toggle" aria-expanded="false">Detailed Explanation</button>
+        <button type="button" class="finding-explanation-toggle" aria-expanded="true">Explanation</button>
         <div class="finding-explanation">
           <p class="finding-explanation-text">${escapeHtml(explanation)}</p>
         </div>
