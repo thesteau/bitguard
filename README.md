@@ -78,31 +78,38 @@ U[User]
 subgraph Oracle["<span style='color:#2c7be5'>Oracle VM</span>"]
     direction TB
 
-    subgraph OracleFrontend["Oracle Frontend"]
+    subgraph OracleFrontend["<span style='color:#17a2b8'>Oracle Frontend</span>"]
         FE[Frontend Web App]
     end
 
-    subgraph OracleBackend["Oracle Backend"]
+    subgraph OracleBackend["<span style='color:#3b5bdb'>Oracle Backend</span>"]
         SUBMIT["/submit Endpoint"]
         CACHE[(Redis Cache)]
     end
 end
+style Oracle fill:#2b2b2b,stroke:#4a4a4a
 
-subgraph AWS["<span style='color:#e67e22'>Amazon VM</span>"]
-    API[Backend API]
-    MODEL[ML Model]
-    APIRESP[API Response]
-end
+subgraph Backend["<span style='color:#c0392b'>Backend API</span>"]
+    direction TB
 
-subgraph Graph["<span style='color:#27ae60'>Neo4j Graph Database</span>"]
-    DB[(Neo4j Database)]
+    subgraph AWS["<span style='color:#e67e22'>Amazon VM</span>"]
+        direction LR
+        VALIDATE["/validate Endpoint"]
+        MODEL[ML Model]
+        APIRESP[API Response]
+    end
+
+    subgraph Graph["<span style='color:#27ae60'>Neo4j Graph Database</span>"]
+        DB[(Neo4j Database)]
+    end
 end
+style Backend fill:#2b2b2b,stroke:#4a4a4a
 
 U --> FE
-FE --> SUBMIT
+FE -- POST request --> SUBMIT
 SUBMIT --> CACHE
-CACHE --> API
-API -- request --> DB
+CACHE -- POST request --> VALIDATE
+VALIDATE -- POST request --> DB
 DB -- data --> MODEL
 MODEL -- prediction --> APIRESP
 APIRESP --> CACHE
