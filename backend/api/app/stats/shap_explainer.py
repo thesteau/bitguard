@@ -44,28 +44,40 @@ FEATURE_DEFS = {
 
     # ── CoinJoin ───────────────────────────────────────────────────────────────
     "coinjoin_ratio_hop0_forward": {
-        "display_name": "CoinJoin activity detected in outgoing transactions",
+        "display_name": {
+            "increases_risk": "CoinJoin activity detected in outgoing transactions",
+            "decreases_risk": "Low CoinJoin activity in outgoing transactions"
+        },
         "explanation": {
             "increases_risk": "A significant portion of this wallet's outgoing transactions use CoinJoin — a technique that mixes funds with other users to obscure where money is going. While used for legitimate privacy, high CoinJoin usage is also a common money laundering technique.",
             "decreases_risk": "A low proportion of outgoing transactions use CoinJoin mixing, consistent with a wallet that does not rely on transaction obfuscation."
         }
     },
     "coinjoin_ratio_hop0_reverse": {
-        "display_name": "CoinJoin activity detected in incoming transactions",
+        "display_name": {
+            "increases_risk": "CoinJoin activity detected in incoming transactions",
+            "decreases_risk": "Low CoinJoin activity in incoming transactions"
+        },
         "explanation": {
             "increases_risk": "A significant portion of funds arriving at this wallet came through CoinJoin mixing, meaning the origin of those funds has been deliberately obscured before reaching this wallet.",
             "decreases_risk": "A low proportion of incoming funds arrived via CoinJoin mixing, suggesting funds came through normal, traceable channels."
         }
     },
     "coinjoin_ratio_hop1_forward": {
-        "display_name": "Neighboring wallets use CoinJoin when sending",
+        "display_name": {
+            "increases_risk": "Neighboring wallets use CoinJoin when sending",
+            "decreases_risk": "Neighboring wallets use minimal CoinJoin when sending"
+        },
         "explanation": {
             "increases_risk": "Wallets directly connected to this one use CoinJoin heavily for outgoing transactions, placing this wallet adjacent to significant transaction obfuscation activity.",
             "decreases_risk": "Connected wallets use CoinJoin minimally for outgoing transactions, indicating the surrounding network does not rely on mixing."
         }
     },
     "coinjoin_ratio_hop1_reverse": {
-        "display_name": "Neighboring wallets receive CoinJoin-mixed funds",
+        "display_name": {
+            "increases_risk": "Neighboring wallets receive CoinJoin-mixed funds",
+            "decreases_risk": "Neighboring wallets receive minimal CoinJoin-mixed funds"
+        },
         "explanation": {
             "increases_risk": "Wallets connected to this one receive a significant portion of their funds via CoinJoin, suggesting the surrounding network relies on transaction mixing.",
             "decreases_risk": "A low portion of funds received by neighboring wallets came through CoinJoin, indicating a low-mixing network environment."
@@ -74,21 +86,30 @@ FEATURE_DEFS = {
 
     # ── Dust ───────────────────────────────────────────────────────────────────
     "dust_ratio_hop0_forward": {
-        "display_name": "Dust transaction activity detected in outgoing transactions",
+        "display_name": {
+            "increases_risk": "Dust transaction activity detected in outgoing transactions",
+            "decreases_risk": "Low dust activity in outgoing transactions"
+        },
         "explanation": {
             "increases_risk": "A significant portion of this wallet's outgoing transactions are dust — tiny Bitcoin amounts under 0.0001 BTC often used to track or probe other wallets. Sending dust at scale is associated with blockchain surveillance tactics.",
             "decreases_risk": "A low proportion of outgoing transactions are dust amounts, not indicative of suspicious behavior."
         }
     },
     "dust_ratio_hop0_reverse": {
-        "display_name": "Dust transaction activity detected in incoming transactions",
+        "display_name": {
+            "increases_risk": "Dust transaction activity detected in incoming transactions",
+            "decreases_risk": "Low dust activity in incoming transactions"
+        },
         "explanation": {
             "increases_risk": "A significant portion of this wallet's incoming transactions are dust amounts, which can indicate this wallet has been targeted by a dust attack to trace its activity.",
             "decreases_risk": "A low proportion of incoming transactions are dust amounts, not indicative of a dust attack."
         }
     },
     "dust_ratio_hop1_forward": {
-        "display_name": "Neighboring wallets send dust transactions",
+        "display_name": {
+            "increases_risk": "Neighboring wallets send dust transactions",
+            "decreases_risk": "Neighboring wallets send minimal dust transactions"
+        },
         "explanation": {
             "increases_risk": "Wallets connected to this one send a high proportion of their transactions as dust, placing this wallet within a network exhibiting dust-sending behavior.",
             "decreases_risk": "Connected wallets send a low proportion of dust transactions, not exhibiting dust attack patterns."
@@ -97,14 +118,20 @@ FEATURE_DEFS = {
 
     # ── Round number transactions ──────────────────────────────────────────────
     "round_ratio_hop0_forward": {
-        "display_name": "Round-number amounts detected in outgoing transactions",
+        "display_name": {
+            "increases_risk": "Round-number amounts detected in outgoing transactions",
+            "decreases_risk": "Low round-number activity in outgoing transactions"
+        },
         "explanation": {
             "increases_risk": "A significant portion of outgoing transactions use round BTC amounts (e.g. 0.1, 0.5, 1.0 BTC). Structured round-number payments are sometimes used to avoid automated detection systems.",
             "decreases_risk": "A low proportion of outgoing transactions use round amounts, not a statistically unusual pattern."
         }
     },
     "round_ratio_hop0_reverse": {
-        "display_name": "Round-number amounts detected in incoming transactions",
+        "display_name": {
+            "increases_risk": "Round-number amounts detected in incoming transactions",
+            "decreases_risk": "Low round-number activity in incoming transactions"
+        },
         "explanation": {
             "increases_risk": "A significant portion of incoming transactions use round BTC amounts, consistent with structured or automated payment patterns.",
             "decreases_risk": "A low proportion of incoming transactions use round amounts, within normal range."
