@@ -111,6 +111,7 @@ SUBMIT --> CACHE
 CACHE -- POST request --> VALIDATE
 VALIDATE -- POST request --> DB
 DB -- data --> MODEL
+DB -- Not found or Error --> APIRESP
 MODEL -- prediction --> APIRESP
 APIRESP --> CACHE
 CACHE --> FE
