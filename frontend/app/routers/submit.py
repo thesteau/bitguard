@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 MAX_ADDRESS_LEN = 120
 BACKEND_URL = envs.BACKEND_URL
+INTERNAL_API_KEY = envs.INTERNAL_API_KEY
 
 
 class SubmitRequest(BaseModel):
@@ -28,6 +29,7 @@ async def validate_address(seed_parameter: str):
         response = requests.post(
             f"{BACKEND_URL}/validate",
             json={"seed_parameter": seed_parameter},
+            headers={"X-Internal-API-Key": INTERNAL_API_KEY},
             timeout=30
         )
         response.raise_for_status()
