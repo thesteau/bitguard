@@ -156,6 +156,38 @@ A typical high-level structure for this project includes:
 
 You can update this section to match the exact structure of your repository if needed.
 
+## Deploying the API
+
+The backend API is a monetizable service. It supports two access paths:
+
+- public requests to `POST /validate` can be protected with x402 pay-to-access
+- trusted server-to-server requests require the correct `X-Internal-API-Key` header
+
+### Required API Environment Variables
+
+When deploying the `api`, make sure to configure these values in `.env`:
+
+- `MODEL_PATH`
+- `DATABASE_URL`
+- `INTERNAL_API_KEY`
+- `X402_ENABLED=true`
+- `X402_PAY_TO_ADDRESS`
+- `X402_NETWORK`
+- `X402_FACILITATOR_URL`
+
+### Internal API Key
+
+`INTERNAL_API_KEY` is the shared secret used for trusted bypass access.
+- requests without that header, or with the wrong value, go through the x402 payment middleware
+
+### x402 Pay-To-Access
+
+Set `X402_PAY_TO_ADDRESS` to the wallet address that should receive payment for API access.
+
+`X402_NETWORK` is the x402 network identifier. The current default, `eip155:84532`, is a Base Sepolia test network. Please change to different one accordingly to the right network.
+
+`X402_FACILITATOR_URL` is the facilitator service used by x402 to verify and settle payments. The current example value, `https://x402.org/facilitator`, is appropriate for testing. Production deployments should point this to the facilitator you intend to use on mainnet.
+
 ## Model and Data Notes
 
 BitGuard relies on blockchain-related data and derived wallet features to support its predictions. These features may include transaction behavior, graph-based signals, and other indicators associated with wallet activity.
@@ -192,6 +224,15 @@ Resources:
 
 - https://eba.b1aab.ai/
 - https://eba.b1aab.ai/docs/bitcoin/etl/restore/
+
+## x402 Resources
+
+For future maintenance of the paid API flow, these are the main x402 references used in this project:
+
+- Seller quickstart: https://docs.x402.org/getting-started/quickstart-for-sellers
+- Facilitator concept: https://docs.x402.org/core-concepts/facilitator
+- Network and token support: https://docs.x402.org/core-concepts/network-and-token-support
+- FAQ: https://docs.x402.org/faq
 
 ## Disclaimer
 

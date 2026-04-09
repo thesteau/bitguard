@@ -3,6 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.payments.payments import configure_x402
 from model.loader import lgb_model
 from app.routers import include_routers
 from app.stats import shap_explainer
@@ -20,6 +21,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+configure_x402(app)
 
 include_routers(app)
 

@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from app.helpers.transact_database import get_data_from_database
@@ -19,7 +19,7 @@ class ValidationRequest(BaseModel):
 @router.post("/validate")
 async def validate_address(payload: ValidationRequest, request: Request):
     logger.info("INFO: Received validation request for seed_parameter: %s", payload.seed_parameter)
-    
+
     model = request.app.state.bitguard_model
     shap_explainer_tree = request.app.state.shap_tree
 
