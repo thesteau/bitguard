@@ -1,0 +1,26 @@
+services:
+  neo4j:
+    image: neo4j:5-enterprise
+    container_name: neo4j
+    restart: unless-stopped
+    stop_grace_period: 2m
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - "E:/neo4j/data:/data"
+      - "E:/neo4j/logs:/logs"
+      - "E:/neo4j/import:/import"
+      - "E:/neo4j/plugins:/plugins"
+      - "E:/neo4j/conf:/conf"
+    environment:
+      NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+      NEO4J_AUTH: "${NEO4J_AUTH}"
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
+      NEO4J_dbms_security_procedures_allowlist: "apoc.*"
+      NEO4J_server_memory_heap_initial__size: "8G"
+      NEO4J_server_memory_heap_max__size: "8G"
+      NEO4J_server_memory_pagecache_size: "12G"
+      NEO4J_server_directories_import: "/import"
+      NEO4J_apoc_export_file_enabled: "true"
