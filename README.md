@@ -1,6 +1,6 @@
 # BitGuard
 
-BitGuard is a Bitcoin wallet address risk assessment tool designed to help users evaluate whether a wallet may be safe, suspicious, or potentially linked to illicit activity. By combining blockchain-derived features with machine learning, BitGuard aims to turn complex transaction behavior into a simple, understandable risk score.
+BitGuard is a Bitcoin wallet address risk assessment tool designed to help users evaluate whether a wallet may be safe, suspicious, or potentially linked to illicit activity. By combining blockchain-derived features with machine learning, BitGuard aims to turn complex transaction behavior into a simple, understandable risk assessment.
 
 ## Team
 Graduate Students from UC Berkeley
@@ -14,7 +14,7 @@ Graduate Students from UC Berkeley
 
 Sending Bitcoin to the wrong wallet can be costly and irreversible. Many users, especially those with limited blockchain experience, have no easy way to judge whether a wallet address is trustworthy before sending funds.
 
-BitGuard addresses this problem by analyzing wallet behavior and producing a risk assessment score that can help users make safer decisions. The goal is to provide a simple interface backed by a more advanced modeling pipeline, so users do not need to understand raw blockchain data in order to benefit from it.
+BitGuard addresses this problem by analyzing wallet behavior and producing a risk assessment that can help users make safer decisions. The goal is to provide a simple interface backed by a more advanced modeling pipeline, so users do not need to understand raw blockchain data in order to benefit from it.
 
 ## Target Users
 
