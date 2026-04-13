@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from app.helpers.transact_database import get_data_from_database
-from pipeline_code.pipeline import build_features
+from app.pipeline_code.pipeline import build_features
 from app.stats import wallet_stats, risk_prob, shap_explainer
 
 

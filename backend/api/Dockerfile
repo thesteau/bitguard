@@ -28,8 +28,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 COPY --from=builder /opt/venv /opt/venv
 COPY app ./app
-COPY model ./model
-COPY pipeline_code ./pipeline_code
 
 # Model artifacts are mounted into /app/pickle by the compose deployments.
 RUN mkdir -p /app/pickle
