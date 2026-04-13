@@ -128,7 +128,7 @@ At a high level, BitGuard follows this process:
 3. The backend checks the cache for an existing result.
 4. If needed, the backend queries Neo4j and or model-ready data sources.
 5. Features associated with the wallet are passed into the machine learning model.
-6. The model returns a risk prediction or score.
+6. The model returns a risk assessment.
 7. The result is sent back to the user through the frontend.
 
 This flow is intended to make sophisticated blockchain analysis easier to use for non-technical users.
