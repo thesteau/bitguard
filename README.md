@@ -22,6 +22,9 @@ BitGuard addresses this problem by analyzing wallet behavior and producing a ris
 ## Video Demo Overview
 https://www.youtube.com/watch?v=lx0kMLqsAPY
 
+#### Demo
+![low-risk-demo](./assets/demo_low.gif)
+
 ## Target Users
 
 BitGuard is intended for:
