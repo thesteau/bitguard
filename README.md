@@ -16,6 +16,9 @@ Sending Bitcoin to the wrong wallet can be costly and irreversible. Many users, 
 
 BitGuard addresses this problem by analyzing wallet behavior and producing a risk assessment that can help users make safer decisions. The goal is to provide a simple interface backed by a more advanced modeling pipeline, so users do not need to understand raw blockchain data in order to benefit from it.
 
+## Video Demo Overview
+https://www.youtube.com/watch?v=lx0kMLqsAPY
+
 ## Target Users
 
 BitGuard is intended for:
