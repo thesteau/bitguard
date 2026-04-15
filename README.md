@@ -1,4 +1,3 @@
-
 # BitGuard
 <p align="center">
   <img src="assets/bitguard2.png" alt="BitGuard logo" width="340" />
