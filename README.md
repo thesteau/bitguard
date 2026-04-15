@@ -1,8 +1,7 @@
-<p align="center">
-  <img src="assets/bitguard2.png" alt="BitGuard logo" width="240" />
-</p>
-
 # BitGuard
+<p align="center">
+  <img src="assets/bitguard2.png" alt="BitGuard logo" width="340" />
+</p>
 
 BitGuard is a Bitcoin wallet address risk assessment tool designed to help users evaluate whether a wallet may be safe, suspicious, or potentially linked to illicit activity. By combining blockchain-derived features with machine learning, BitGuard aims to turn complex transaction behavior into a simple, understandable risk assessment.
 
