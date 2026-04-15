@@ -27,4 +27,9 @@ sudo systemctl start docker
 
 sudo usermod -aG docker ubuntu
 
+sudo apt install make
+
+mkdir -p ~/api
+mkdir -p ~/database
+
 echo "Docker and dependencies setup complete."
